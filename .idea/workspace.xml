@@ -5,9 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7291d278-5660-48f8-b106-57dcc27d345d" name="Changes" comment="Ensi commit">
-      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/FXML_FPLGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/FPL_PaaikkunaGUIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/FXML_FPLGUIView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/FPL_Paaikkuna.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/FXML_FPLMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/FXML_FPLMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/Weather.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/Weather.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,6 +20,7 @@
         <option value="FXMLPackage.java.child.1" />
         <option value="FXMLPackage.java.child.2" />
         <option value="FXMLPackage" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -59,6 +59,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.FXML_FPLMain.executor": "Run",
+    "Application.Weather.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "Version__0.01",
     "ignore.virus.scanning.warn.message": "true",
@@ -76,7 +77,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.Weather">
     <configuration name="FXML_FPLMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="fxFXML_FPL.FXML_FPLMain" />
       <module name="Project" />
@@ -90,8 +91,22 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Weather" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="FPL_Code.Weather" />
+      <module name="Project" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="FPL_Code.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Weather" />
         <item itemvalue="Application.FXML_FPLMain" />
       </list>
     </recent_temporary>
@@ -112,7 +127,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744644359813</updated>
-      <workItem from="1744644361409" duration="7888000" />
+      <workItem from="1744644361409" duration="18278000" />
     </task>
     <task id="LOCAL−00001" summary="Ensi commit">
       <option name="closed" value="true" />
