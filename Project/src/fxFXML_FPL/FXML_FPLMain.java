@@ -15,7 +15,7 @@ public class FXML_FPLMain extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            FXMLLoader ldr = new FXMLLoader(getClass().getResource("FXML_FPLGUIView.fxml"));
+            FXMLLoader ldr = new FXMLLoader(getClass().getResource("FPL_Paaikkuna.fxml"));
             final Pane root = ldr.load();
             //final FXML_FPLGUIController fxml_fplCtrl = (FXML_FPLGUIController)ldr.getController();
             Scene scene = new Scene(root);
