@@ -48,6 +48,11 @@ public class Weather {
 
     }
 
+    /**
+     * Hakee Aviation Weather Center sivulta parametrina tuodun kentän säätiedot raakana tekstinä ja palauttaa sen
+     * @param paikka paikka josta sää haetaan
+     * @return Palauttaa säätiedot raa'assa muodossa
+     */
     public static String testaa(String paikka) {
         HttpClient client = HttpClient.newHttpClient();
 
@@ -74,6 +79,10 @@ public class Weather {
         return ("Säätiedot kohteessa: " + paikka + "\n" + "ajankohta: " + ajankohta + "\n" + "tuuli: " + tuuli + "\n" + "näkyvyys: " + nakyvyys + "\n" + "pilvet: " + pilvet + "\n" + "Lämpötila: " + temp + "\n" + "kastepiste: " + kasteP + "\n" + "ilmanpaine: " + ilmanP + "\n");
     }
 
+    /**
+     * Ottaa parametrina tuodun merkkijono rivin (Raw) ja tulkitsee sen antaen oliolle arvot rivin perusteella
+     * @param rivi rivi josta tiedot pilkotaan
+     */
     public void teeOlio(String rivi) {
         this.paikka = rivi.split(" ")[0];
         this.ajankohta = rivi.split(" ")[1];
