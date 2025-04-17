@@ -6,7 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="7291d278-5660-48f8-b106-57dcc27d345d" name="Changes" comment="Ensi commit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/Weather.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/Weather.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/Project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Project/Project.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/Notam.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/Notam.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project/FPL_Code/Notam.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/FPL_Code/Notam.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project/FPL_Code/Weather.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/FPL_Code/Weather.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,12 +62,13 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.FXML_FPLMain.executor": "Run",
+    "Application.Notam.executor": "Run",
     "Application.Weather.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "Version__0.01",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/OmatProjektit/FPL_Project",
+    "last_opened_file_path": "C:/devel/jar/jsoup-1.19.1.jar",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -77,13 +81,26 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="Application.Weather">
+  <component name="RunManager" selected="Application.Notam">
     <configuration name="FXML_FPLMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="fxFXML_FPL.FXML_FPLMain" />
       <module name="Project" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="fxFXML_FPL.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Notam" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="FPL_Code.Notam" />
+      <module name="Project" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="FPL_Code.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -106,6 +123,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Notam" />
         <item itemvalue="Application.Weather" />
         <item itemvalue="Application.FXML_FPLMain" />
       </list>
@@ -127,7 +145,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744644359813</updated>
-      <workItem from="1744644361409" duration="18278000" />
+      <workItem from="1744644361409" duration="23187000" />
     </task>
     <task id="LOCAL−00001" summary="Ensi commit">
       <option name="closed" value="true" />
