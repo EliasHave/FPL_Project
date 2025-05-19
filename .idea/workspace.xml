@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="7291d278-5660-48f8-b106-57dcc27d345d" name="Changes" comment="Ensi commit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/Aircraft.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/Aircraft.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/Notam.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/Notam.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Project/FPL_Code/Notam.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/FPL_Code/Notam.class" afterDir="false" />
     </list>
@@ -33,18 +34,18 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "EliasHave"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;EliasHave&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/EliasHave/FPL_Project.git",
-    "accountId": "bb0353de-46a2-4e36-8d3e-b52d313c4e08"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/EliasHave/FPL_Project.git&quot;,
+    &quot;accountId&quot;: &quot;bb0353de-46a2-4e36-8d3e-b52d313c4e08&quot;
   }
-}]]></component>
+}</component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -59,10 +60,12 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.Aircraft.executor": "Run",
     "Application.FXML_FPLMain.executor": "Run",
     "Application.Notam.executor": "Run",
     "Application.Weather.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "Version__0.01",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
@@ -79,7 +82,20 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="Application.Notam">
+  <component name="RunManager" selected="Application.Aircraft">
+    <configuration name="Aircraft" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="FPL_Code.Aircraft" />
+      <module name="Project" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="FPL_Code.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="FXML_FPLMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="fxFXML_FPL.FXML_FPLMain" />
       <module name="Project" />
@@ -121,6 +137,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Aircraft" />
         <item itemvalue="Application.Notam" />
         <item itemvalue="Application.Weather" />
         <item itemvalue="Application.FXML_FPLMain" />
@@ -143,7 +160,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744644359813</updated>
-      <workItem from="1744644361409" duration="33381000" />
+      <workItem from="1744644361409" duration="39288000" />
+      <workItem from="1747649790867" duration="4008000" />
     </task>
     <task id="LOCAL−00001" summary="Ensi commit">
       <option name="closed" value="true" />

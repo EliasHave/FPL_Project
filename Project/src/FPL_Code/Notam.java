@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 /**
  * luokka jossa kerätään kaikki mahdollinen tieto liittyen esimerkiksi lähtö ja määränpää kenttien turvallisuudesta
+ * Lajitellaan myös tietoja paikkojen perusteella ja mahdollisesti tehdään niistä selvemmin luettavia
  * Tiedot lähtee FlightPlannerille jossa niiden pohjalta jalostetaan lentosuunnitelma
  */
 public class Notam {
