@@ -14,7 +14,7 @@ import javafx.scene.control.TextField;
  */
 public class FPL_PaaikkunaGUIController {
     @FXML
-    private Button Button_Laske;
+    private Button Button_Aloitetaan;
 
     @FXML
     private TextArea TA_LupaKirja;
@@ -39,47 +39,15 @@ public class FPL_PaaikkunaGUIController {
 
     @FXML
     void painettu(ActionEvent event) {
-
-        if (tarkista()) {
-            laske();
-        }
+            aloita();
     }
 
 //==========================================================================================================================================
 
     /**
-     * aliohjelma joka tarkistaa onko kenttiin syötetty tietoa
-     * @return palauttaa true jos kenttiin on syötetty tiedot, false jos yksikin kriittisistä kentistä on tyhjänä
+     *
      */
-    public boolean tarkista() {
-
-        if ( TA_LupaKirja.getText().isEmpty() ) {
-            Dialogs.showMessageDialog("Muistithan laittaa lupakirjasi");
-            return false;
-        }
-        if ( TF_RekNro.getText().isEmpty() ) {
-            Dialogs.showMessageDialog("Muistithan laittaa koneen rakisterinumeron");
-            return false;
-        }
-        if ( TF_LahtoAika.getText().isEmpty() ) {
-            Dialogs.showMessageDialog("Muistithan laittaa lähtöajan");
-            return false;
-        }
-        if ( TF_Maaranpaa.getText().isEmpty() ) {
-            Dialogs.showMessageDialog("Muistithan laittaa määränpään");
-            return false;
-        }
-        if ( TF_LahtoKentta.getText().isEmpty() ) {
-            Dialogs.showMessageDialog("Muistithan laittaa lähtökentän");
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * aliohjelma jossa lasketaan lentosuunnitelmat annettujen tietojen perusteella
-     */
-    public void laske() {
+    public void aloita() {
 
     }
 }

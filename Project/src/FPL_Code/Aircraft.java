@@ -236,6 +236,7 @@ public class Aircraft {
         return radio;
     }
 
+    @Override
     public String toString() {
         return "koneen tiedot: \n" +
                 "Rekisteri tunnus: " + rekNro + "|" + " Konetyyppi: " + koneTyyppi + "|" + " Kategoria: " + kategoria +"\n" +
