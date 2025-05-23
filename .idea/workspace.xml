@@ -6,9 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="7291d278-5660-48f8-b106-57dcc27d345d" name="Changes" comment="Ensi commit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/Aircraft.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/Aircraft.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/FPL_Paaikkuna.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/FPL_Paaikkuna.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/FPL_PaaikkunaGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/FPL_PaaikkunaGUIController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/KoneGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/KoneGUIController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Project/FPL_Code/Aircraft.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/FPL_Code/Aircraft.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -60,30 +59,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Aircraft.executor": "Run",
-    "Application.FXML_FPLMain.executor": "Run",
-    "Application.Notam.executor": "Run",
-    "Application.Weather.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Version__0.01",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/devel/jar/jsoup-1.19.1.jar",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.JavaFX",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Aircraft.executor&quot;: &quot;Run&quot;,
+    &quot;Application.FXML_FPLMain.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Notam.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Weather.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Version__0.01&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/devel/jar/jsoup-1.19.1.jar&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.JavaFX&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\OmatProjektit\FPL_Project\Project\src\fxFXML_FPL" />
@@ -168,7 +167,8 @@
       <option name="presentableId" value="Default" />
       <updated>1744644359813</updated>
       <workItem from="1744644361409" duration="39288000" />
-      <workItem from="1747649790867" duration="12140000" />
+      <workItem from="1747649790867" duration="14838000" />
+      <workItem from="1747901428260" duration="3373000" />
     </task>
     <task id="LOCAL−00001" summary="Ensi commit">
       <option name="closed" value="true" />

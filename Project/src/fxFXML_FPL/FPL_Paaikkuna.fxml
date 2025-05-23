@@ -19,7 +19,7 @@
    <bottom>
       <HBox alignment="CENTER_RIGHT" prefHeight="51.0" prefWidth="344.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="Button_Laske" mnemonicParsing="false" onAction="#painettu" text="Aloitetaan" />
+            <Button fx:id="Button_Aloitetaan" mnemonicParsing="false" onAction="#painettu" text="Aloitetaan" />
          </children>
          <BorderPane.margin>
             <Insets />
