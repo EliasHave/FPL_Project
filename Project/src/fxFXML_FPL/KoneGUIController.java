@@ -2,10 +2,15 @@ package fxFXML_FPL;
 
 import FPL_Code.Aircraft;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 
 public class KoneGUIController {
 
@@ -76,6 +81,7 @@ public class KoneGUIController {
     @FXML
     public void Valmis(javafx.event.ActionEvent actionEvent) {
         teeOlio();
+        siirry();
     }
 
     // ===================================================================================================================================================================================================
@@ -108,7 +114,29 @@ public class KoneGUIController {
         kone.setTransponder(TF_Transponder.getText());
         kone.setGPS(TF_GPS.getText());
         kone.setRadio(TF_Radio.getText());
+
+        System.out.println(kone);
+
     }
 
+
+    public void siirry() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("PilotGUIView.fxml"));
+            Parent pilotRoot = loader.load();
+
+            // Hae nykyinen ikkuna
+            Stage currentStage = (Stage) Button_Valmis.getScene().getWindow();
+
+            // Luo uusi näkymä ja aseta se nykyiseen ikkunaan
+            Scene pilotScene = new Scene(pilotRoot);
+            currentStage.setScene(pilotScene);
+            currentStage.setTitle("Lentäjän tiedot");
+            currentStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
