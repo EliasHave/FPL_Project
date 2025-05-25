@@ -55,16 +55,16 @@ public class FPL_PaaikkunaGUIController {
      */
     public void aloita() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("KoneGUIView.fxml"));
-            Parent koneRoot = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("RouteGUIView.fxml"));
+            Parent routeRoot = loader.load();
 
             // Hae nykyinen ikkuna
             Stage currentStage = (Stage) Button_Aloitetaan.getScene().getWindow();
 
             // Luo uusi näkymä ja aseta se nykyiseen ikkunaan
-            Scene koneScene = new Scene(koneRoot);
-            currentStage.setScene(koneScene);
-            currentStage.setTitle("Lentokoneen tiedot");
+            Scene routeScene = new Scene(routeRoot);
+            currentStage.setScene(routeScene);
+            currentStage.setTitle("Reitin tiedot");
             currentStage.show();
 
         } catch (IOException e) {

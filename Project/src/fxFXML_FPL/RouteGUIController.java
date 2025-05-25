@@ -8,7 +8,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
-public class PilotGUIController {
+import java.io.IOException;
+
+public class RouteGUIController {
 
     @FXML
     private Button Button_Valmis;
@@ -17,23 +19,24 @@ public class PilotGUIController {
     void valmis(ActionEvent event) {
         siirry();
     }
+
 // ======================================================================================================================================
 
     public void siirry() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("SuunnitelmaGUIView.fxml"));
-            Parent root = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("KoneGUIView.fxml"));
+            Parent koneRoot = loader.load();
 
             // Hae nykyinen ikkuna
             Stage currentStage = (Stage) Button_Valmis.getScene().getWindow();
 
-            //tehdään uusi scene ja laitetaan se nykyiseen ikkunaan
-            Scene suunnitelmaScene = new Scene(root);
-            currentStage.setScene(suunnitelmaScene);
-            currentStage.setTitle("Suunnitelma tiedot");
+            // Luo uusi näkymä ja aseta se nykyiseen ikkunaan
+            Scene koneScene = new Scene(koneRoot);
+            currentStage.setScene(koneScene);
+            currentStage.setTitle("Koneen tiedot");
             currentStage.show();
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

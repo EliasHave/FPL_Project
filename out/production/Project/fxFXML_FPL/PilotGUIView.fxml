@@ -75,7 +75,7 @@
       <Label text="Kirjoita tähän ohjaajan tiedot" BorderPane.alignment="CENTER" />
    </top>
    <bottom>
-      <Button mnemonicParsing="false" text="Valmis" textFill="#008cff" BorderPane.alignment="CENTER_RIGHT">
+      <Button fx:id="Button_Valmis" mnemonicParsing="false" onAction="#valmis" text="Valmis" textFill="#008cff" BorderPane.alignment="CENTER_RIGHT">
          <BorderPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </BorderPane.margin>
