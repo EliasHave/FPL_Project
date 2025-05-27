@@ -11,4 +11,29 @@ import FPL_Code.Notam;
  */
 public class FlightPlanner {
 
+    private Weather saa;
+    private Aircraft kone;
+    private String notam;
+    private Pilot pilot;
+
+
+    public void setSaa(Weather saa) {
+        this.saa = saa;
+    }
+
+
+    public void setKone(Aircraft kone) {
+        this.kone = kone;
+    }
+
+
+    public void setNotam(String notam) {
+        this.notam = notam;
+    }
+
+
+    public void setPilot(Pilot pilot) {
+        this.pilot = pilot;
+    }
+
 }

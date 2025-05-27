@@ -1,9 +1,26 @@
 package fxFXML_FPL;
 
-/**
- * @author elias
- * @version 25.5.2025
- */
+import javafx.fxml.FXML;
+import javafx.scene.control.TextArea;
+
 public class SuunnitelmaGUIController {
-    // TODO
+
+    @FXML
+    private TextArea TA_AirCraft;
+
+    @FXML
+    private TextArea TA_Notam;
+
+    @FXML
+    private TextArea TA_Pilot;
+
+    @FXML
+    private TextArea TA_Saa;
+
+
+// ==============================================================================================================================================
+
+
+
+
 }

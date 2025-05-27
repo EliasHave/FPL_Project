@@ -29,6 +29,9 @@ public class Notam {
      * Aliohjelma joka hakee paikan perusteella notamit AIS sivustolta
      */
     public static String scrapeAIS() {
+
+        String palautus = "";
+
         try {
             Document doc = Jsoup.connect("https://www.ais.fi/bulletins/efinen.htm")
                     .userAgent("Mozilla")
@@ -77,10 +80,11 @@ public class Notam {
             }
 
             System.out.println(notamBuilder);
+            palautus = notamBuilder.toString();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "";
+        return palautus;
     }
 }

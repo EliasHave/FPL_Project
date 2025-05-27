@@ -6,9 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="7291d278-5660-48f8-b106-57dcc27d345d" name="Changes" comment="Ensi commit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/Weather.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/Weather.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/PilotGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/PilotGUIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Project/FPL_Code/Weather.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/FPL_Code/Weather.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/FlightPlanner.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/FlightPlanner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/Notam.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/Notam.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/SuunnitelmaGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/SuunnitelmaGUIController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/SuunnitelmaGUIView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/SuunnitelmaGUIView.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,7 +170,7 @@
       <workItem from="1744644361409" duration="39288000" />
       <workItem from="1747649790867" duration="14838000" />
       <workItem from="1747901428260" duration="16563000" />
-      <workItem from="1748331095306" duration="6202000" />
+      <workItem from="1748331095306" duration="7983000" />
     </task>
     <task id="LOCAL−00001" summary="Ensi commit">
       <option name="closed" value="true" />
