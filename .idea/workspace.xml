@@ -7,11 +7,8 @@
     <list default="true" id="7291d278-5660-48f8-b106-57dcc27d345d" name="Changes" comment="Ensi commit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/Weather.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/Weather.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/RouteGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/RouteGUIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/RouteGUIView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/RouteGUIView.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/PilotGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/PilotGUIController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Project/FPL_Code/Weather.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/FPL_Code/Weather.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/RouteGUIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/RouteGUIController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/RouteGUIView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/RouteGUIView.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,11 +19,11 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="FxmlFile" />
-        <option value="Class" />
         <option value="FXMLPackage.java.child.0" />
         <option value="FXMLPackage.java.child.1" />
         <option value="FXMLPackage.java.child.2" />
         <option value="FXMLPackage" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -91,7 +88,7 @@
       <recent name="C:\OmatProjektit\FPL_Project\Project\src\fxFXML_FPL" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Weather">
+  <component name="RunManager" selected="Application.FXML_FPLMain">
     <configuration name="Aircraft" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="FPL_Code.Aircraft" />
       <module name="Project" />
@@ -146,10 +143,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Weather" />
         <item itemvalue="Application.FXML_FPLMain" />
-        <item itemvalue="Application.Aircraft" />
         <item itemvalue="Application.Notam" />
+        <item itemvalue="Application.Weather" />
+        <item itemvalue="Application.Aircraft" />
       </list>
     </recent_temporary>
   </component>
@@ -172,7 +169,7 @@
       <workItem from="1744644361409" duration="39288000" />
       <workItem from="1747649790867" duration="14838000" />
       <workItem from="1747901428260" duration="16563000" />
-      <workItem from="1748331095306" duration="3121000" />
+      <workItem from="1748331095306" duration="6202000" />
     </task>
     <task id="LOCAL−00001" summary="Ensi commit">
       <option name="closed" value="true" />

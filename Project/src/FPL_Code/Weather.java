@@ -63,6 +63,8 @@ public class Weather {
         String raw = Mjonot.erota(rivi, '\n');   // erotetaan raw ja taf osio
         saa.teeOlio(raw);   // Laitetaan olion tiedoiksi säätiedot sen perusteella mitä raw teksti sisältää
         String taf = rivi.toString();   // Loput alkuperäisestä tää tiedottesta laitetaan on taf
+        System.out.println(taf);
+        System.out.println(raw);
         return saa;
     }
 
