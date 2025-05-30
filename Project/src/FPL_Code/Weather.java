@@ -36,7 +36,7 @@ public class Weather {
 
     /**
      * haetaan ajantasaisset säätiedot parametrina tuodusta paikasta ja tehdään sää-olio niillä tiedoilla
-     * @param paikka
+     * @param paikka paikka josta sää haetaan, pitää olla ICAO muodossa
      */
     public static void haeSaa(String paikka) {
         Weather saa = new Weather();
@@ -54,7 +54,7 @@ public class Weather {
 
     /**
      * tekee sääolion parametrina tuodusta paikasta ja palauttaa sen
-     * @param paikka paikka josta sää halutaan hakea
+     * @param paikka paikka josta sää halutaan hakea, paikka ICAO muodossa
      * @return sääolio paikasta
      */
     public static Weather haeSaaOlio(String paikka) {

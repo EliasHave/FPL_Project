@@ -89,6 +89,7 @@ public class KoneGUIController {
 
     /**
      * Tekee Aircraft olion tekstikenttiin annettujen tietojen perusteella.
+     * Vie tehdyn olion planneriin myöhempää käsittelyä varten
      */
     public void teeOlio() {
         Aircraft kone = new Aircraft();
@@ -122,6 +123,11 @@ public class KoneGUIController {
 
     }
 
+
+    /**
+     * Lisää parametrina tuodun Aircraft olion planneriin jotta sen tietoja voidaan käyttää lopuksi
+     * @param kone Aircraft olio joka viedään Planneriin eli jolla lentoa ollaan suunniteltu tekevän
+     */
     public void lisaaKonePlanneriin(Aircraft kone){
         FlightPlanner planner = FXML_FPLMain.getFlightPlanner();
         planner.setKone(kone);

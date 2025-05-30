@@ -37,6 +37,12 @@ public class RouteGUIController {
 
 // ======================================================================================================================================
 
+
+    /**
+     * Tulkitsee käyttöliittymässä kirjoitetut tiedot.
+     * muodostaa lähtökentän ja määränpää kentän Weather oliot ja lisää ne planneriin
+     * hakee myös notamit ja lisää ne planneriin myöhäisempää käyttöä varten
+     */
     public void reitti() {
         String lahtoAika = TF_LahtoAika.getText();
         String lahtoKentta = TF_LahtoKentta.getText();

@@ -42,6 +42,11 @@ public class PilotGUIController {
     }
 // ======================================================================================================================================
 
+
+    /**
+     * Muodostaa uuden Pilot olion ja antaa sille arvoja syötteen perusteella
+     * lopuksi Pilot olio lisätään planneriin myöhempää käsittelyä varten
+     */
     public void muodostaPilot() {
         Pilot p = new Pilot();
         p.setNimi(TF_Nimi.getText());
@@ -57,6 +62,10 @@ public class PilotGUIController {
     }
 
 
+    /**
+     * Lisää parametrina tuodun Pilot olion planneriin myöhäisempää käsittelyä varten
+     * @param p Pilot olio joka viedään planneriin
+     */
     public void lisaaPilotPlanneriin(Pilot p) {
         FlightPlanner planner = FXML_FPLMain.getFlightPlanner();
         planner.setPilot(p);

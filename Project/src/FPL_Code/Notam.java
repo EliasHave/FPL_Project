@@ -20,6 +20,12 @@ public class Notam {
     }
 
 
+    /**
+     * hakee ajantasaiset suomen notamit
+     * ei erottele paikan mukaan niitö vaan palauttaa kaiken mahdollisen tiedon
+     * @param paikka
+     * @return String tyyppinen notam teksti
+     */
     public static String haeNotam(String paikka) {
         String notam = scrapeAIS();
         return notam;
@@ -27,6 +33,7 @@ public class Notam {
 
     /**
      * Aliohjelma joka hakee paikan perusteella notamit AIS sivustolta
+     * @return palautaa raakana notam tiedot String muodossa
      */
     public static String scrapeAIS() {
 

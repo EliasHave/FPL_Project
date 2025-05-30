@@ -14,8 +14,12 @@ import javafx.fxml.FXMLLoader;
  */
 public class FXML_FPLMain extends Application {
 
-    private static FlightPlanner planner = new FlightPlanner();
+    private static FlightPlanner planner = new FlightPlanner(); // tehdään planner johon voidaan tallentaa säätiedot, koneentiedot yms jotta niitä voidaan käsitellä lopussa
 
+    /**
+     * aliohjelma joka palauttaa ohjelman alussa luodun "suunnitelman" johon kerätään tietoja sitä mukaa kun käyttöliittymässä asioita täydennellään
+     * @return palauttaa alussa tehdyn "suunnitelman" jotta pystytään lisäämään tietoa sinne
+     */
     public static FlightPlanner getFlightPlanner() {
         return planner;
     }
