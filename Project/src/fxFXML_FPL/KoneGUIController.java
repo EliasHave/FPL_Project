@@ -1,6 +1,7 @@
 package fxFXML_FPL;
 
 import FPL_Code.Aircraft;
+import FPL_Code.FlightPlanner;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -115,8 +116,15 @@ public class KoneGUIController {
         kone.setGPS(TF_GPS.getText());
         kone.setRadio(TF_Radio.getText());
 
+        lisaaKonePlanneriin(kone);
+
         System.out.println(kone);
 
+    }
+
+    public void lisaaKonePlanneriin(Aircraft kone){
+        FlightPlanner planner = FXML_FPLMain.getFlightPlanner();
+        planner.setKone(kone);
     }
 
 

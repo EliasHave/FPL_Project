@@ -1,5 +1,6 @@
 package fxFXML_FPL;
 
+import FPL_Code.FlightPlanner;
 import FPL_Code.Pilot;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -49,7 +50,16 @@ public class PilotGUIController {
         p.setSPosti(TF_sPosti.getText());
         p.setLupaKirjat(TA_LupaKirja.getText());
         p.setKokemus(Integer.parseInt(TF_Kokemus.getText()));
+
+        lisaaPilotPlanneriin(p);
+
         System.out.println(p);
+    }
+
+
+    public void lisaaPilotPlanneriin(Pilot p) {
+        FlightPlanner planner = FXML_FPLMain.getFlightPlanner();
+        planner.setPilot(p);
     }
 
 

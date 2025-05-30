@@ -1,6 +1,7 @@
 package fxFXML_FPL;
 
 import FPL_Code.Weather;
+import FPL_Code.FlightPlanner;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -42,8 +43,14 @@ public class RouteGUIController {
         String maaranPaa = TF_MaaranPaa.getText();
 
         Weather saaLahto = haeSaaOlio(lahtoKentta);
-
         Weather saaMaaranPaa = haeSaaOlio(maaranPaa);
+
+        FlightPlanner planner = FXML_FPLMain.getFlightPlanner();
+        planner.setSaaLahto(saaLahto);
+        planner.setSaaMaapanpaa(saaMaaranPaa);
+
+        String notam = FPL_Code.Notam.haeNotam("paikka");
+        planner.setNotam(notam);
 
         System.out.println(saaLahto);
         System.out.println(saaMaaranPaa);

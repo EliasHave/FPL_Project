@@ -1,4 +1,5 @@
 package fxFXML_FPL;
+import FPL_Code.FlightPlanner;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -12,8 +13,16 @@ import javafx.fxml.FXMLLoader;
  *
  */
 public class FXML_FPLMain extends Application {
+
+    private static FlightPlanner planner = new FlightPlanner();
+
+    public static FlightPlanner getFlightPlanner() {
+        return planner;
+    }
+
     @Override
     public void start(Stage primaryStage) {
+
         try {
             FXMLLoader ldr = new FXMLLoader(getClass().getResource("FPL_Paaikkuna.fxml"));
             final Pane root = ldr.load();

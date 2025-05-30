@@ -11,14 +11,20 @@ import FPL_Code.Notam;
  */
 public class FlightPlanner {
 
-    private Weather saa;
+    private Weather saaMaapanpaa;
+    private Weather saaLahto;
     private Aircraft kone;
     private String notam;
     private Pilot pilot;
 
 
-    public void setSaa(Weather saa) {
-        this.saa = saa;
+    public void setSaaLahto(Weather saa) {
+        this.saaLahto = saa;
+    }
+
+
+    public void setSaaMaapanpaa(Weather saa) {
+        this.saaMaapanpaa = saa;
     }
 
 
@@ -34,6 +40,32 @@ public class FlightPlanner {
 
     public void setPilot(Pilot pilot) {
         this.pilot = pilot;
+    }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    public Weather getSaaLahto() {
+        return saaLahto;
+    }
+
+
+    public Weather getSaaMaapanpaa() {
+        return saaMaapanpaa;
+    }
+
+
+    public Aircraft getKone() {
+        return kone;
+    }
+
+
+    public String getNotam() {
+        return notam;
+    }
+
+
+    public Pilot getPilot() {
+        return pilot;
     }
 
 }

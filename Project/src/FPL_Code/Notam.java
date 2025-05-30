@@ -21,8 +21,8 @@ public class Notam {
 
 
     public static String haeNotam(String paikka) {
-        scrapeAIS();
-        return "";
+        String notam = scrapeAIS();
+        return notam;
     }
 
     /**
