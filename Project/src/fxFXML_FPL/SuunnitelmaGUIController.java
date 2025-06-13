@@ -5,6 +5,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import com.google.gson.*;
+import okhttp3.*;
+
+import java.io.IOException;
 
 public class SuunnitelmaGUIController {
 
@@ -33,6 +37,7 @@ public class SuunnitelmaGUIController {
         kirjaaNotam();
         kirjaaPilot();
         kirjaaSaa();
+        testaaAI();
     }
 
 
@@ -56,6 +61,50 @@ public class SuunnitelmaGUIController {
         saa.append("\n");
         saa.append("Sää määränpäässä: \n" + planner.getSaaMaapanpaa().toString());
         TA_Saa.setText(saa.toString());
+    }
+
+    public void testaaAI() {
+        String apiKeyAI = System.getenv("OPENAI_API_KEY");
+        if (apiKeyAI == null) {
+            System.out.println("API-avain puuttuu. Varmista että ympäristömuuttuja OPENAI_API_KEY on asetettu.");
+        }
+        else {
+            System.out.println("API-avain löytyi: " + apiKeyAI);
+            OkHttpClient client = new OkHttpClient();
+
+            String json = """
+        {
+          "model": "gpt-3.5-turbo",
+          "messages": [
+            {"role": "user", "content": "Kerro minulle lyhyt iltasatu"}
+          ]
+        }
+        """;
+
+            Request request = new Request.Builder()
+                    .url("https://api.openai.com/v1/chat/completions")
+                    .header("Authorization", "Bearer " + apiKeyAI)
+                    .header("Content-Type", "application/json")
+                    .post(RequestBody.create(json, MediaType.get("application/json")))
+                    .build();
+
+            try (Response response = client.newCall(request).execute()) {
+                if (response.isSuccessful()) {
+                    JsonObject obj = JsonParser.parseString(response.body().string()).getAsJsonObject();
+                    String output = obj.getAsJsonArray("choices")
+                            .get(0).getAsJsonObject()
+                            .getAsJsonObject("message")
+                            .get("content").getAsString();
+
+                    System.out.println("✳️ Vastaus tekoälyltä:\n" + output);
+                } else {
+                    System.err.println("❌ Virhe: " + response.code() + " " + response.body().string());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
 

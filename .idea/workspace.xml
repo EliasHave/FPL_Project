@@ -5,12 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7291d278-5660-48f8-b106-57dcc27d345d" name="Changes" comment="Ensi commit">
-      <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/Notam.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/Notam.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/Weather.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/Weather.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/FXML_FPLMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/FXML_FPLMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/KoneGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/KoneGUIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/PilotGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/PilotGUIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/RouteGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/RouteGUIController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/Project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Project/Project.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/FlightPlanner.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/FlightPlanner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/SuunnitelmaGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/SuunnitelmaGUIController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project/FPL_Code/Notam.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/FPL_Code/Notam.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/FXML_FPLMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/FXML_FPLMain.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/KoneGUIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/KoneGUIController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/PilotGUIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/PilotGUIController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/RouteGUIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/RouteGUIController.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,30 +64,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Aircraft.executor&quot;: &quot;Run&quot;,
-    &quot;Application.FXML_FPLMain.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Notam.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Weather.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Version__0.01&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/devel/jar/jsoup-1.19.1.jar&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.JavaFX&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Aircraft.executor": "Run",
+    "Application.FXML_FPLMain.executor": "Run",
+    "Application.Notam.executor": "Run",
+    "Application.Weather.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "Version__0.01",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/devel/jar/kotlin-stdlib-1.8.0.jar",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.7057471",
+    "settings.editor.selected.configurable": "preferences.JavaFX",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\OmatProjektit\FPL_Project\Project\src\fxFXML_FPL" />
@@ -143,6 +146,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.Aircraft" />
+      <item itemvalue="Application.FXML_FPLMain" />
+      <item itemvalue="Application.Notam" />
+      <item itemvalue="Application.Weather" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.FXML_FPLMain" />
@@ -172,6 +181,8 @@
       <workItem from="1747649790867" duration="14838000" />
       <workItem from="1747901428260" duration="16563000" />
       <workItem from="1748331095306" duration="14738000" />
+      <workItem from="1749022711962" duration="1152000" />
+      <workItem from="1749023890845" duration="7806000" />
     </task>
     <task id="LOCAL−00001" summary="Ensi commit">
       <option name="closed" value="true" />
