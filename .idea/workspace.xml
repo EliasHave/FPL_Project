@@ -8,12 +8,19 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Project/Project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Project/Project.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/FlightPlanner.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/FlightPlanner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/Notam.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/Notam.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/Weather.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/Weather.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/RouteGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/RouteGUIController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/SuunnitelmaGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/SuunnitelmaGUIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Project/FPL_Code/Notam.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/FPL_Code/Notam.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/FXML_FPLMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/FXML_FPLMain.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/KoneGUIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/KoneGUIController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/PilotGUIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/PilotGUIController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/RouteGUIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/RouteGUIController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/SuunnitelmaGUIView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/SuunnitelmaGUIView.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project/FPL_Code/FlightPlanner.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/FPL_Code/FlightPlanner.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project/FPL_Code/Weather.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/FPL_Code/Weather.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/FPL_Paaikkuna.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/FPL_Paaikkuna.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/KoneGUIView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/KoneGUIView.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/PilotGUIView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/PilotGUIView.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/RouteGUIView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/RouteGUIView.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/SuunnitelmaGUIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/SuunnitelmaGUIController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/SuunnitelmaGUIView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/SuunnitelmaGUIView.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +36,7 @@
         <option value="FXMLPackage.java.child.2" />
         <option value="FXMLPackage" />
         <option value="Class" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -64,49 +72,45 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Aircraft.executor": "Run",
-    "Application.FXML_FPLMain.executor": "Run",
-    "Application.Notam.executor": "Run",
-    "Application.Weather.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Version__0.01",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/devel/jar/kotlin-stdlib-1.8.0.jar",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.7057471",
-    "settings.editor.selected.configurable": "preferences.JavaFX",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Aircraft.executor&quot;: &quot;Run&quot;,
+    &quot;Application.FXML_FPLMain.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Notam.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Weather.executor&quot;: &quot;Run&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;JavaScript Debug.FPL_Template.html.executor&quot;: &quot;Run&quot;,
+    &quot;JavaScript Debug.FPL_Template2.html.executor&quot;: &quot;Run&quot;,
+    &quot;JavaScript Debug.lentosuunnitelma_testi.html.executor&quot;: &quot;Run&quot;,
+    &quot;JavaScript Debug.map.html (1).executor&quot;: &quot;Run&quot;,
+    &quot;JavaScript Debug.map.html.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Version__0.01&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/devel/jar/jackson-core-2.17.1.jar&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.7057471&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.JavaFX&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\OmatProjektit\FPL_Project\Project\resources" />
+      <recent name="C:\OmatProjektit\FPL_Project\Project" />
       <recent name="C:\OmatProjektit\FPL_Project\Project\src\fxFXML_FPL" />
+      <recent name="C:\OmatProjektit\FPL_Project\Project\src\resources" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.FXML_FPLMain">
-    <configuration name="Aircraft" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="FPL_Code.Aircraft" />
-      <module name="Project" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="FPL_Code.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="JavaScript Debug.lentosuunnitelma_testi.html">
     <configuration name="FXML_FPLMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="fxFXML_FPL.FXML_FPLMain" />
       <module name="Project" />
@@ -120,44 +124,32 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Notam" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="FPL_Code.Notam" />
-      <module name="Project" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="FPL_Code.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
+    <configuration name="FPL_Template2.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/FPL_Project/Project/FPL_Template2.html" useBuiltInWebServerPort="true">
+      <method v="2" />
     </configuration>
-    <configuration name="Weather" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="FPL_Code.Weather" />
-      <module name="Project" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="FPL_Code.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
+    <configuration name="FPL_Template.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/FPL_Project/Project/FPL_Template.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="lentosuunnitelma_testi.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/FPL_Project/lentosuunnitelma_testi.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="map.html (1)" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/FPL_Project/Project/map.html" useBuiltInWebServerPort="true">
+      <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Application.Aircraft" />
       <item itemvalue="Application.FXML_FPLMain" />
-      <item itemvalue="Application.Notam" />
-      <item itemvalue="Application.Weather" />
+      <item itemvalue="JavaScript Debug.FPL_Template.html" />
+      <item itemvalue="JavaScript Debug.FPL_Template2.html" />
+      <item itemvalue="JavaScript Debug.lentosuunnitelma_testi.html" />
+      <item itemvalue="JavaScript Debug.map.html (1)" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JavaScript Debug.lentosuunnitelma_testi.html" />
         <item itemvalue="Application.FXML_FPLMain" />
-        <item itemvalue="Application.Notam" />
-        <item itemvalue="Application.Weather" />
-        <item itemvalue="Application.Aircraft" />
+        <item itemvalue="JavaScript Debug.FPL_Template2.html" />
+        <item itemvalue="JavaScript Debug.FPL_Template.html" />
+        <item itemvalue="JavaScript Debug.map.html (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -182,7 +174,8 @@
       <workItem from="1747901428260" duration="16563000" />
       <workItem from="1748331095306" duration="14738000" />
       <workItem from="1749022711962" duration="1152000" />
-      <workItem from="1749023890845" duration="7806000" />
+      <workItem from="1749023890845" duration="91217000" />
+      <workItem from="1751613261930" duration="34337000" />
     </task>
     <task id="LOCAL−00001" summary="Ensi commit">
       <option name="closed" value="true" />
@@ -200,6 +193,16 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Ensi commit" />
     <option name="LAST_COMMIT_MESSAGE" value="Ensi commit" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.NoClassDefFoundError" package="java.lang" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -1,5 +1,6 @@
 package fxFXML_FPL;
 
+import FPL_Code.Notam;
 import FPL_Code.Weather;
 import FPL_Code.FlightPlanner;
 import javafx.event.ActionEvent;
@@ -12,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.List;
 
 import static FPL_Code.Weather.haeSaaOlio;
 
@@ -55,8 +57,14 @@ public class RouteGUIController {
         planner.setSaaLahto(saaLahto);
         planner.setSaaMaapanpaa(saaMaaranPaa);
 
-        String notam = FPL_Code.Notam.haeNotam("paikka");
-        planner.setNotam(notam);
+        String notamTeksti = FPL_Code.Notam.haeNotam("paikka");
+
+        List<Notam.NotamOlio> notamit = Notam.teeNotamOliot(notamTeksti);
+        for (Notam.NotamOlio n : notamit) {
+            System.out.println(n);
+        }
+
+        planner.setNotam(notamTeksti);
 
         System.out.println(saaLahto);
         System.out.println(saaMaaranPaa);

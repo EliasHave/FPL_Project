@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lentosuunnitelma</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 1rem; background: #f5f5f5; color: #333; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 2rem; }
+        .section { display: flex; flex-direction: column; gap: 1rem; }
+        .columns { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .column { flex: 1; min-width: 280px; background: #f0f0f0; padding: 1rem; border-radius: 6px; white-space: pre-wrap; }
+        #map { width: 100%; height: 500px; border-radius: 6px; }
+        .legend-box {
+            background: white;
+            padding: 10px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="section"><h1>Lentosuunnitelma</h1><p><strong>Lähtökenttä:</strong> {{DEPARTURE}} → <strong>Määränpää:</strong> {{DESTINATION}}</p></div>
+    <div class="section"><h2>Reittikartta</h2><div id="map"></div></div>
+    <div class="section"><h2>Sää</h2><div class="columns">
+        <div class="column"><h3>Lähtökenttä</h3>{{WX_LAHTO}}</div>
+        <div class="column"><h3>Reitillä</h3>{{WX_REITTI}}</div>
+        <div class="column"><h3>Määränpää</h3>{{WX_PAATE}}</div>
+    </div></div>
+    <div class="section"><h2>Notamit</h2><div class="columns">
+        <div class="column"><h3>Lähtökenttä</h3>{{NTM_LAHTO}}</div>
+        <div class="column"><h3>Reitillä</h3>{{NTM_REITTI}}</div>
+        <div class="column"><h3>Määränpää</h3>{{NTM_PAATE}}</div>
+    </div></div>
+    <div class="section"><h2>Ilma-alus</h2><div class="column">{{AIRCRAFT}}</div></div>
+    <div class="section"><h2>Pilotti</h2><div class="column">{{PILOT}}</div></div>
+</div>
+
+<script>
+
+    const map = L.map('map').setView([60.1699, 24.9384], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    map.createPane('routePane');
+    map.getPane('routePane').style.zIndex = 650;
+
+    const typeColorMap = {
+        1: "#ff0000", 2: "#ffa500", 3: "#999900", 4: "#996600",
+        5: "#00cccc", 6: "#9900cc", 7: "#00cc66", 12: "#aaaaaa", "default": "#888888"
+    };
+
+    const units = ["FT AMSL", "FT AGL", "FL", "M AMSL", "M AGL", "UNL", "FL"];
+    const typeName = code => ({
+        1: "Class C", 2: "Class D", 3: "Rajoitettu", 4: "Kielletty",
+        5: "TMA", 6: "CTR", 7: "Class G", 12: "ADIZ"
+    }[code] || "Muu");
+
+    const isTrivial = p =>
+        typeName(p.type) === "Muu" &&
+        p.lowerLimit?.value === 0 && p.lowerLimit?.unit === 1 &&
+        p.upperLimit?.value === 999 && p.upperLimit?.unit === 6;
+
+    const allAirspaces = [];
+
+    fetch('fi_asp.geojson')
+        .then(res => res.json())
+        .then(data => {
+            const filtered = data.features.filter(f => !isTrivial(f.properties));
+            const geoLayer = L.geoJSON(filtered, {
+                style: f => ({
+                    color: "#222",
+                    fillColor: typeColorMap[f.properties.type] || typeColorMap.default,
+                    weight: 0.6,
+                    opacity: 1,
+                    fillOpacity: 0.25
+                }),
+                onEachFeature: (feature, layer) => {
+                    allAirspaces.push({ feature, layer });
+                    layer.on({
+                        mouseover: e => e.target.setStyle({ weight: 1.2, fillOpacity: 0.35 }),
+                        mouseout: e => geoLayer.resetStyle(e.target)
+                    });
+                }
+            }).addTo(map);
+
+            map.on('click', e => {
+                const point = e.latlng;
+                const matches = allAirspaces.filter(({ layer }) =>
+                    layer.getBounds().contains(point) &&
+                    layer._containsPoint(map.latLngToLayerPoint(point))
+                );
+
+                if (matches.length) {
+                    matches.sort((a, b) => {
+                        const getAlt = p => (p.lowerLimit?.unit === 2 || p.lowerLimit?.unit === 6)
+                            ? (p.lowerLimit?.value || 0) * 100
+                            : (p.lowerLimit?.value || 0);
+                        return getAlt(a.feature.properties) - getAlt(b.feature.properties);
+                    });
+
+                    const content = matches.map(({ feature }) => {
+                        const p = feature.properties;
+                        const low = `${p.lowerLimit?.value ?? "?"} ${units[p.lowerLimit?.unit] || ""}`;
+                        const high = `${p.upperLimit?.value ?? "?"} ${units[p.upperLimit?.unit] || ""}`;
+                        return `<div style="margin-bottom:8px;"><strong>${p.name}</strong><br>${typeName(p.type)}<br>Korkeus: ${low} – ${high}</div>`;
+                    }).join("");
+
+                    L.popup().setLatLng(point).setContent(`<strong>Ilmatilat kohdassa:</strong><br>${content}`).openOn(map);
+                }
+            });
+        });
+
+    // Lentokentät
+    fetch('fi_apt.geojson')
+        .then(res => res.json())
+        .then(data => {
+            const airportLayer = L.geoJSON(data, {
+                pointToLayer: (f, latlng) => {
+                    const p = f.properties;
+                    const name = p.name || "Tuntematon";
+                    const icao = p.icaoCode || "";
+                    const elev = p.elevation?.value ? `Korkeus: ${p.elevation.value} ft` : "";
+                    const freq = (p.frequencies && p.frequencies[0]) ? `Taajuus: ${p.frequencies[0].value}` : "";
+                    const runways = p.runways?.map(r => `RWY ${r.designator} (${r.dimension.length.value}×${r.dimension.width.value} m)`).join("<br>") || "";
+                    return L.circleMarker(latlng, {
+                        radius: 5,
+                        fillColor: "#0000ff",
+                        color: "#001133",
+                        weight: 1,
+                        opacity: 1,
+                        fillOpacity: 0.9
+                    }).bindPopup(`<strong>${name}</strong><br>${icao}<br>${elev}<br>${freq}<br>${runways}`);
+                }
+            });
+            airportLayer.addTo(map);
+            setTimeout(() => airportLayer.eachLayer(l => l.bringToFront()), 500);
+        });
+
+    fetch('fi_nav.geojson')
+        .then(res => res.json())
+        .then(data => {
+            const navLayer = L.geoJSON(data, {
+                pointToLayer: (f, latlng) => {
+                    const p = f.properties;
+                    const name = p.name || "Tuntematon";
+                    const ident = p.identifier || "";
+                    const freq = p.frequency?.value ? `${p.frequency.value} kHz` : "-";
+                    const decl = p.magneticDeclination !== undefined ? `${p.magneticDeclination.toFixed(1)}°` : "-";
+                    const elev = p.elevation?.value ? `${p.elevation.value} ft` : "-";
+
+                    // Tarkista onko auki 24/7
+                    const open247 = p.hoursOfOperation?.operatingHours?.every(h =>
+                        h.startTime === "00:00" && h.endTime === "00:00"
+                    );
+                    const hours = open247 ? "Auki 24/7" : "Rajoitetut aukioloajat";
+
+                    const popup = `
+                    <strong>${name}</strong><br>
+                    Koodi: ${ident}<br>
+                    Taajuus: ${freq}<br>
+                    Korkeus: ${elev}<br>
+                    Magneettinen deklinaatio: ${decl}<br>
+                    ${hours}
+                `;
+
+                    return L.circleMarker(latlng, {
+                        radius: 4,
+                        fillColor: "#00aa00",
+                        color: "#003300",
+                        weight: 1,
+                        opacity: 1,
+                        fillOpacity: 0.85
+                    }).bindPopup(popup);
+                }
+            });
+
+            navLayer.addTo(map);
+            setTimeout(() => navLayer.eachLayer(l => l.bringToFront()), 500);
+        });
+
+
+    // Reitti
+    {{JS_POINTS}}
+
+    points.forEach(p => {
+        L.marker(p.coords, { zIndexOffset: 1000 })
+            .addTo(map)
+            .bindPopup(p.name);
+            //.bringToFront();
+    });
+
+    L.polyline(points.map(p => p.coords), {
+        color: 'blue',
+        weight: 3,
+        opacity: 1,
+        pane: 'routePane'
+    }).addTo(map);
+
+    // Legend
+    const legendControl = L.Control.extend({
+        options: { position: 'bottomright' },
+        onAdd: function () {
+            const div = L.DomUtil.create('div', 'legend-box');
+            const entries = {
+                1: "Class C", 2: "Class D", 3: "Rajoitettu", 4: "Kielletty",
+                5: "TMA", 6: "CTR", 7: "Class G", 12: "ADIZ"
+            };
+            for (const [code, label] of Object.entries(entries)) {
+                const color = typeColorMap[code] || typeColorMap["default"];
+                div.innerHTML += `<div><span style="display:inline-block;width:12px;height:12px;background:${color};margin-right:6px;border-radius:2px;"></span>${label}</div>`;
+            }
+            return div;
+        }
+    });
+    map.addControl(new legendControl());
+
+    setTimeout(() => map.invalidateSize(), 300);
+</script>
+</body>
+</html>

@@ -34,6 +34,12 @@ public class Weather {
 
     }
 
+
+    public String getPaikka() {
+        return paikka;
+    }
+
+
     /**
      * haetaan ajantasaisset säätiedot parametrina tuodusta paikasta ja tehdään sää-olio niillä tiedoilla
      * @param paikka paikka josta sää haetaan, pitää olla ICAO muodossa
