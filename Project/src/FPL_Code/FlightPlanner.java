@@ -156,6 +156,9 @@ public class FlightPlanner {
         List<Feature> olennaisetIlmatilat = suodataIlmatilat(kaikkiIlmatilat, lahtoPiste, maaranpaaPiste, 50.0);
         kirjoitaGeoJson1(olennaisetIlmatilat);
 
+        suodataLentokentat(lahtoPiste, maaranpaaPiste);
+        suodataNavaidit(lahtoPiste, maaranpaaPiste);
+
         List<WeatherSamplePoint> saanMittausPisteet = kartoitaSaaReitilla(lahtoPiste, maaranpaaPiste);
 
         return reittiPisteet;
@@ -228,7 +231,206 @@ public class FlightPlanner {
     }
 
 
-    public void kirjoitaGeoJson(List<Feature> features) {
+    /**
+     * Suodattaa reitin kannalta olennaiset lentokentät GeoJSONista.
+     */
+    public void suodataLentokentat(Point lahtoPiste, Point maaranpaaPiste) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(new File("fi_apt.geojson"));  // oikea tiedosto
+
+            List<Feature> kaikkiKentat = new ArrayList<>();
+            JsonNode features = root.get("features");
+
+            for (JsonNode f : features) {
+                /**
+                JsonNode geom = f.get("geometry");
+                JsonNode props = f.get("properties");
+                 **/
+                JsonNode props = f.get("properties");
+                int tyyppi = props.path("type").asInt(-1);
+
+                // Jätetään helikopterikentät (type == 7) pois
+                if (tyyppi == 7) continue;
+
+                JsonNode geom = f.get("geometry");
+                kaikkiKentat.add(new Feature(geom, props));
+            }
+
+            List<Feature> olennaiset = suodataPointFeaturesLahellaReittia(kaikkiKentat, lahtoPiste, maaranpaaPiste, 50.0);
+
+            // karsitaan turhat tiedot
+            List<Feature> tiivistetyt = new ArrayList<>();
+            for (Feature f : olennaiset) {
+                tiivistetyt.add(karsiLentokentanProperties(f));
+            }
+
+            kirjoitaGeoJson("suodatetutLentokentat.geojson", tiivistetyt);
+
+        } catch (IOException e) {
+            System.err.println("❌ Lentokenttien suodatus epäonnistui: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Karsii lentokenttä-Featuresta pois tekoälyn kannalta epäolennaiset tiedot ja palauttaa uuden Feature-olion.
+     */
+    private Feature karsiLentokentanProperties(Feature alkuperainen) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        ObjectNode slimProps = mapper.createObjectNode();
+        slimProps.put("name", alkuperainen.properties.path("name").asText(""));
+        slimProps.put("icaoCode", alkuperainen.properties.path("icaoCode").asText(""));
+        slimProps.put("type", alkuperainen.properties.path("type").asInt(-1));
+
+        // Elevation mukaan
+        JsonNode elevation = alkuperainen.properties.path("elevation");
+        if (!elevation.isMissingNode()) {
+            ObjectNode elev = mapper.createObjectNode();
+            elev.put("value", elevation.path("value").asInt());
+            elev.put("unit", elevation.path("unit").asInt());
+            slimProps.set("elevation", elev);
+        }
+
+        // PPR, vain jos true
+        if (alkuperainen.properties.path("ppr").asBoolean(false)) {
+            slimProps.put("ppr", true);
+        }
+
+        // Skydive, Winch, jne.
+        if (alkuperainen.properties.path("skydiveActivity").asBoolean(false)) {
+            slimProps.put("skydive", true);
+        }
+        if (alkuperainen.properties.path("winchOnly").asBoolean(false)) {
+            slimProps.put("winchOnly", true);
+        }
+
+        // Radiotaajuudet (vain yksi tärkein)
+        JsonNode freqs = alkuperainen.properties.path("frequencies");
+        if (freqs.isArray() && freqs.size() > 0) {
+            for (JsonNode f : freqs) {
+                if (f.path("primary").asBoolean(true)) {
+                    ObjectNode freq = mapper.createObjectNode();
+                    freq.put("name", f.path("name").asText());
+                    freq.put("value", f.path("value").asText());
+                    slimProps.set("frequency", freq);
+                    break;
+                }
+            }
+        }
+
+        // Kiitotiet
+        JsonNode runways = alkuperainen.properties.path("runways");
+        if (runways.isArray() && runways.size() > 0) {
+            ArrayNode uusiRunwayt = mapper.createArrayNode();
+            for (JsonNode rw : runways) {
+                ObjectNode r = mapper.createObjectNode();
+                r.put("designator", rw.path("designator").asText());
+                r.put("heading", rw.path("trueHeading").asInt());
+
+                // Pinta (yksinkertaistettu)
+                int materialCode = rw.path("surface").path("mainComposite").asInt(-1);
+                String pinta = switch (materialCode) {
+                    case 0 -> "asfaltti";
+                    case 2 -> "nurmi";
+                    case 5 -> "sora";
+                    case 12 -> "päällystetty";
+                    default -> "tuntematon";
+                };
+                r.put("surface", pinta);
+
+                // Mitat
+                JsonNode dim = rw.path("dimension");
+                ObjectNode mitat = mapper.createObjectNode();
+                mitat.put("length_m", dim.path("length").path("value").asInt(-1));
+                mitat.put("width_m", dim.path("width").path("value").asInt(-1));
+                r.set("size", mitat);
+
+                // Poikkeavuudet
+                if (rw.path("pilotCtrlLighting").asBoolean(false)) {
+                    r.put("pilotCtrlLighting", true);
+                }
+                if (rw.path("takeOffOnly").asBoolean(false)) {
+                    r.put("takeoffOnly", true);
+                }
+                if (rw.path("landingOnly").asBoolean(false)) {
+                    r.put("landingOnly", true);
+                }
+
+                uusiRunwayt.add(r);
+            }
+            slimProps.set("runways", uusiRunwayt);
+        }
+
+        return new Feature(alkuperainen.geometry, slimProps);
+    }
+
+
+    /**
+     * Suodattaa navaidit reitin läheltä.
+     */
+    public void suodataNavaidit(Point lahtoPiste, Point maaranpaaPiste) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(new File("fi_nav.geojson"));
+
+            List<Feature> kaikkiNavaidit = new ArrayList<>();
+            JsonNode features = root.get("features");
+
+            for (JsonNode f : features) {
+                JsonNode geom = f.get("geometry");
+                JsonNode props = f.get("properties");
+                kaikkiNavaidit.add(new Feature(geom, props));
+            }
+
+            List<Feature> olennaiset = suodataPointFeaturesLahellaReittia(kaikkiNavaidit, lahtoPiste, maaranpaaPiste, 50.0);
+            kirjoitaGeoJson("suodatetutNavaidit.geojson", olennaiset);
+
+        } catch (IOException e) {
+            System.err.println("❌ Navaidien suodatus epäonnistui: " + e.getMessage());
+        }
+    }
+
+
+    /**
+     * Suodattaa piste-tyyppiset geo-objektit (esim. lentokentät, navaidit), jotka ovat lähellä reittiä.
+     */
+    private List<Feature> suodataPointFeaturesLahellaReittia(List<Feature> kaikki, Point lahtoPiste, Point maaranpaaPiste, double sadeKm) {
+        List<Feature> tulokset = new ArrayList<>();
+
+        GeometryFactory gf = new GeometryFactory();
+        LineString reitti = gf.createLineString(new Coordinate[]{
+                new Coordinate(lahtoPiste.getLon(), lahtoPiste.getLat()),
+                new Coordinate(maaranpaaPiste.getLon(), maaranpaaPiste.getLat())
+        });
+
+        Geometry puskuri = reitti.buffer(sadeKm / 111.32);  // asteiksi
+
+        for (Feature f : kaikki) {
+            try {
+                JsonNode coords = f.geometry.get("coordinates");
+                double lon = coords.get(0).asDouble();
+                double lat = coords.get(1).asDouble();
+
+                org.locationtech.jts.geom.Point p = gf.createPoint(new Coordinate(lon, lat));
+                if (puskuri.contains(p)) {
+                    tulokset.add(f);
+                }
+            } catch (Exception e) {
+                System.err.println("⚠️ Lentokentän/navaidin pistevirhe: " + e.getMessage());
+            }
+        }
+
+        return tulokset;
+    }
+
+
+
+    /**
+     * kirjoittaa parametrina tulevasta features listasta geoJson tiedoston. Ei karsi enää tässä vaiheessa mitään pois vaan kirjoittaa kaiken mitä fetaures listassa on
+     * @param features
+     */
+    public void kirjoitaGeoJson(String tiedNimi, List<Feature> features) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode root = mapper.createObjectNode();
         ArrayNode featureArray = mapper.createArrayNode();
@@ -245,8 +447,8 @@ public class FlightPlanner {
         root.set("features", featureArray);
 
         try {
-            mapper.writerWithDefaultPrettyPrinter().writeValue(new File("suodatetutIlmatilat.geojson"), root);
-            System.out.println("✅ Suodatettu GeoJSON tallennettu: " + "suodatetutIlmatilat.geojson");
+            mapper.writerWithDefaultPrettyPrinter().writeValue(new File(tiedNimi), root);
+            System.out.println("✅ Suodatettu GeoJSON tallennettu: " + tiedNimi);
         } catch (IOException e) {
             System.err.println("❌ GeoJSON-tiedoston tallennus epäonnistui: " + e.getMessage());
         }
@@ -254,7 +456,7 @@ public class FlightPlanner {
 
 
     /**
-     * kirjoittaa GeoJson tiedoston parametrina tulevasta features(ilmatilat) listasta
+     * kirjoittaa GeoJson tiedoston parametrina tulevasta features(ilmatilat) listasta, karsii "turhat tiedot pois"
      * @param features lista feature(ilmatila) olioita
      */
     public void kirjoitaGeoJson1(List<Feature> features) {
