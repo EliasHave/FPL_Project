@@ -281,14 +281,47 @@ public class FlightPlanner {
         ObjectNode slimProps = mapper.createObjectNode();
         slimProps.put("name", alkuperainen.properties.path("name").asText(""));
         slimProps.put("icaoCode", alkuperainen.properties.path("icaoCode").asText(""));
-        slimProps.put("type", alkuperainen.properties.path("type").asInt(-1));
+        // Lentokentän tyyppi selkokielellä
+        int kenttaTyyppi = alkuperainen.properties.path("type").asInt(-1);
+        String kenttaTyyppiNimi = switch (kenttaTyyppi) {
+            case 2 -> "Civil Airfield";
+            case 3 -> "International Airport";
+            case 5 -> "Military Airfield";
+            case 6 -> "Ultra Light Airfield";
+            case 8 -> "Closed Airfield";
+            case 9 -> "Airport resp. Airfield IFR";
+            default -> "tuntematon";
+        };
+        slimProps.put("type", kenttaTyyppiNimi);
 
-        // Elevation mukaan
+        // Traffic type (0 = VFR, 1 = IFR, 2 = VFR+IFR)
+        ArrayNode trafficArray = (ArrayNode) alkuperainen.properties.path("trafficType");
+        List<String> liikenneTyypit = new ArrayList<>();
+        for (JsonNode t : trafficArray) {
+            switch (t.asInt()) {
+                case 0 -> liikenneTyypit.add("VFR");
+                case 1 -> liikenneTyypit.add("IFR");
+                case 2 -> liikenneTyypit.add("VFR + IFR");
+            }
+        }
+        if (!liikenneTyypit.isEmpty()) {
+            slimProps.put("trafficType", String.join(", ", liikenneTyypit));
+        }
+
+        // Elevation mukaan + yksikkö selkokielellä
         JsonNode elevation = alkuperainen.properties.path("elevation");
         if (!elevation.isMissingNode()) {
             ObjectNode elev = mapper.createObjectNode();
             elev.put("value", elevation.path("value").asInt());
-            elev.put("unit", elevation.path("unit").asInt());
+
+            int yksikko = elevation.path("unit").asInt(-1);
+            String yksikkoStr = switch (yksikko) {
+                case 0 -> "m MSL";
+                case 1 -> "ft MSL";
+                default -> "tuntematon";
+            };
+            elev.put("unit", yksikkoStr);
+
             slimProps.set("elevation", elev);
         }
 
@@ -384,12 +417,108 @@ public class FlightPlanner {
             }
 
             List<Feature> olennaiset = suodataPointFeaturesLahellaReittia(kaikkiNavaidit, lahtoPiste, maaranpaaPiste, 50.0);
-            kirjoitaGeoJson("suodatetutNavaidit.geojson", olennaiset);
+
+            // Tiivistys
+            List<Feature> tiivistetyt = new ArrayList<>();
+            for (Feature f : olennaiset) {
+                tiivistetyt.add(karsiNavaidinProperties(f));
+            }
+
+            kirjoitaGeoJson("suodatetutNavaidit.geojson", tiivistetyt);
 
         } catch (IOException e) {
             System.err.println("❌ Navaidien suodatus epäonnistui: " + e.getMessage());
         }
     }
+
+
+    /**
+     * aliohjelma joka karsii navaidien properties osiosta turhat tiedot pois
+     * @param alkuperainen
+     * @return
+     */
+    private Feature karsiNavaidinProperties(Feature alkuperainen) {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode props = mapper.createObjectNode();
+
+        // Perustiedot
+        props.put("name", alkuperainen.properties.path("name").asText(""));
+        props.put("identifier", alkuperainen.properties.path("identifier").asText(""));
+
+        // Tyyppi ja selite
+        int typeCode = alkuperainen.properties.path("type").asInt(-1);
+        props.put("type", typeCode);
+
+        String typeName = switch (typeCode) {
+            case 0 -> "DME";
+            case 1 -> "VOR-DME";
+            case 2 -> "NDB";
+            case 3 -> "TACAN";
+            case 4 -> "VOR";
+            case 5 -> "VORTAC";
+            case 7 -> "DVOR-DME";
+            default -> "tuntematon";
+        };
+        props.put("typeName", typeName);
+
+        // Taajuus
+        JsonNode freq = alkuperainen.properties.path("frequency");
+        if (!freq.isMissingNode()) {
+            ObjectNode f = mapper.createObjectNode();
+            f.put("value", freq.path("value").asText(""));
+            f.put("unit", freq.path("unit").asInt(-1));
+            props.set("frequency", f);
+        }
+
+        // Kanava
+        if (alkuperainen.properties.has("channel")) {
+            props.put("channel", alkuperainen.properties.path("channel").asText());
+        }
+
+        // Korkeus
+        JsonNode elevation = alkuperainen.properties.path("elevation");
+        if (!elevation.isMissingNode()) {
+            ObjectNode elev = mapper.createObjectNode();
+            elev.put("value", elevation.path("value").asInt(-1));
+            elev.put("unit", elevation.path("unit").asInt(-1));
+            props.set("elevation", elev);
+        }
+
+        // Kantama (jos saatavilla)
+        JsonNode range = alkuperainen.properties.path("range");
+        if (!range.isMissingNode()) {
+            ObjectNode r = mapper.createObjectNode();
+            r.put("value", range.path("value").asInt(-1));
+            r.put("unit", range.path("unit").asInt(-1));
+            props.set("range", r);
+        }
+
+        // HoursOfOperation – jätetään vain jos ei ole täysin oletusarvo (00:00-00:00 joka päivä)
+        JsonNode hours = alkuperainen.properties.path("hoursOfOperation").path("operatingHours");
+        if (hours.isArray()) {
+            boolean onPoikkeavaa = false;
+
+            for (JsonNode h : hours) {
+                if (!h.path("startTime").asText().equals("00:00") ||
+                        !h.path("endTime").asText().equals("00:00") ||
+                        h.path("byNotam").asBoolean(false) ||
+                        h.path("sunrise").asBoolean(false) ||
+                        h.path("sunset").asBoolean(false) ||
+                        h.path("publicHolidaysExcluded").asBoolean(false)) {
+                    onPoikkeavaa = true;
+                    break;
+                }
+            }
+
+            if (onPoikkeavaa) {
+                props.set("hoursOfOperation", hours);
+            }
+        }
+
+        // (Poistetaan: _id, createdAt, updatedAt, elevationGeoid jne.)
+        return new Feature(alkuperainen.geometry, props);
+    }
+
 
 
     /**
