@@ -154,7 +154,8 @@ public class FlightPlanner {
         Point maaranpaaPiste = maaranpaaKoord;
         List<Feature> kaikkiIlmatilat = lataaIlmatilatGeoJsonista();
         List<Feature> olennaisetIlmatilat = suodataIlmatilat(kaikkiIlmatilat, lahtoPiste, maaranpaaPiste, 50.0);
-        kirjoitaGeoJson1(olennaisetIlmatilat);
+
+        suodataIlmatilatJaKirjoitaGeoJson(olennaisetIlmatilat);
 
         suodataLentokentat(lahtoPiste, maaranpaaPiste);
         suodataNavaidit(lahtoPiste, maaranpaaPiste);
@@ -163,6 +164,156 @@ public class FlightPlanner {
 
         return reittiPisteet;
 
+    }
+
+
+    /**
+     * suodatta parametrina tulevasta fetaures (ilmatilat) listasta turhat kentätä pois ja kirjoittaa uuden geojson tiedoston näistä ilmatiloista
+     * @param olennaisetIlmatilat Ilmatilojen lista jonka ilmatiloista halutaan karsia turhat tiedot pois
+     */
+    public void suodataIlmatilatJaKirjoitaGeoJson(List<Feature> olennaisetIlmatilat) {
+        // karsitaan turhat tiedot
+        List<Feature> tiivistetyt = new ArrayList<>();
+        for (Feature f : olennaisetIlmatilat) {
+            tiivistetyt.add(karsiIlmatilanProperties(f));
+        }
+        kirjoitaGeoJson("suodatetutIlmatilat2.geojson", tiivistetyt);
+    }
+
+
+    /**
+     * karsii parametrina tulevasta fetaure (ilmatila) oliosta turha kentät pois ja palauttaa karsitun feature olion
+     * @param alkuperainen alkuperäinen olio josta katsotaan mitä tietoja uuteen karsittuun olioon jätetään
+     * @return palauttaa uuden feature olion joka on karisittu veriso alkuperäisestä
+     */
+    public Feature karsiIlmatilanProperties(Feature alkuperainen) {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode props = mapper.createObjectNode();
+
+        // Nimi ja luokka
+        props.put("name", alkuperainen.properties.path("name").asText(""));
+
+        int icaoTyyppi = alkuperainen.properties.path("icaoClass").asInt(-1);
+        String icaoClass = switch (icaoTyyppi) {
+            case 0  -> "A";
+            case 1  -> "B";
+            case 2  -> "C";
+            case 3  -> "D";
+            case 4  -> "E";
+            case 5  -> "F";
+            case 6  -> "G";
+            case 8  -> "Unclassified / Special Use Airspace (SUA)";
+            default -> "tuntematon";
+        };
+        props.put("icaoClass", icaoClass);
+
+        int tyyppi = alkuperainen.properties.path("type").asInt(-1);
+        String tyyppiKirjain = switch (tyyppi) {
+            case 0  -> "Other";
+            case 1  -> "Restricted";
+            case 2  -> "Danger";
+            case 3  -> "Prohibited";
+            case 4  -> "Controlled Tower Region (CTR)";
+            case 5  -> "Transponder Mandatory Zone (TMZ)";
+            case 6  -> "Radio Mandatory Zone (RMZ)";
+            case 7  -> "Terminal Maneuvering Area (TMA)";
+            case 8  -> "Temporary Reserved Area (TRA)";
+            case 9  -> "Temporary Segregated Area (TSA)";
+            case 10 -> "Flight Information Region (FIR)";
+            case 11 -> "Upper Flight Information Region (UIR)";
+            case 12 -> "Air Defense Identification Zone (ADIZ)";
+            case 13 -> "Airport Traffic Zone (ATZ)";
+            case 14 -> "Military Airport Traffic Zone (MATZ)";
+            case 15 -> "Airway";
+            case 16 -> "Military Training Route (MTR)";
+            case 17 -> "Alert Area";
+            case 18 -> "Warning Area";
+            case 19 -> "Protected Area";
+            case 20 -> "Helicopter Traffic Zone (HTZ)";
+            case 21 -> "Gliding Sector";
+            case 22 -> "Transponder Setting (TRP)";
+            case 23 -> "Traffic Information Zone (TIZ)";
+            case 24 -> "Traffic Information Area (TIA)";
+            case 25 -> "Military Training Area (MTA)";
+            case 26 -> "Control Area (CTA)";
+            case 27 -> "ACC Sector (ACC)";
+            case 28 -> "Aerial Sporting Or Recreational Activity";
+            case 29 -> "Low Altitude Overflight Restriction";
+            case 30 -> "Military Route (MRT)";
+            case 31 -> "TSA/TRA Feeding Route (TFR)";
+            case 32 -> "VFR Sector";
+            case 33 -> "FIS Sector";
+            case 34 -> "Lower Traffic Area (LTA)";
+            case 35 -> "Upper Traffic Area (UTA)";
+            case 36 -> "Military Controlled Tower Region (MCTR)";
+            default -> "tuntematon";
+        };
+        props.put("type", tyyppiKirjain);
+
+        // Korkeudet
+        props.set("lowerLimit", muodostaKorkeusNode(alkuperainen.properties.path("lowerLimit")));
+        props.set("upperLimit", muodostaKorkeusNode(alkuperainen.properties.path("upperLimit")));
+
+        // byNotam
+        if (alkuperainen.properties.path("byNotam").asBoolean(false)) {
+            props.put("byNotam", true);
+        }
+
+        // Aukioloajat kuten ennen
+        JsonNode hours = alkuperainen.properties.path("hoursOfOperation").path("operatingHours");
+        if (hours.isArray()) {
+            boolean kaikkiStandardia = true;
+            for (JsonNode h : hours) {
+                if (!h.path("startTime").asText("").equals("00:00") ||
+                        !h.path("endTime").asText("").equals("00:00") ||
+                        h.path("byNotam").asBoolean(false) ||
+                        h.path("sunrise").asBoolean(false) ||
+                        h.path("sunset").asBoolean(false) ||
+                        h.path("publicHolidaysExcluded").asBoolean(false)) {
+                    kaikkiStandardia = false;
+                    break;
+                }
+            }
+
+            if (kaikkiStandardia) {
+                props.put("hoursOfOperation", "24/7");
+            } else {
+                ArrayNode slimmedHours = mapper.createArrayNode();
+                for (JsonNode h : hours) {
+                    ObjectNode d = mapper.createObjectNode();
+                    d.put("dayOfWeek", h.path("dayOfWeek").asInt());
+                    d.put("startTime", h.path("startTime").asText());
+                    d.put("endTime", h.path("endTime").asText());
+                    if (h.path("byNotam").asBoolean(false)) d.put("byNotam", true);
+                    if (h.path("sunrise").asBoolean(false)) d.put("sunrise", true);
+                    if (h.path("sunset").asBoolean(false)) d.put("sunset", true);
+                    if (h.path("publicHolidaysExcluded").asBoolean(false)) d.put("publicHolidaysExcluded", true);
+                    slimmedHours.add(d);
+                }
+                ObjectNode hoursWrapper = mapper.createObjectNode();
+                hoursWrapper.set("operatingHours", slimmedHours);
+                props.set("hoursOfOperation", hoursWrapper);
+            }
+        }
+
+        return new Feature(alkuperainen.geometry, props);
+    }
+
+
+    private ObjectNode muodostaKorkeusNode(JsonNode korkeus) {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode node = mapper.createObjectNode();
+        node.put("value", korkeus.path("value").asInt(-1));
+
+        int yksikko = korkeus.path("unit").asInt(-1);
+        String yksikkoStr = switch (yksikko) {
+            case 1 -> "ft MSL";
+            case 6 -> "FL";
+            default -> "tuntematon";
+        };
+        node.put("unit", yksikkoStr);
+
+        return node;
     }
 
 
@@ -284,12 +435,19 @@ public class FlightPlanner {
         // Lentokentän tyyppi selkokielellä
         int kenttaTyyppi = alkuperainen.properties.path("type").asInt(-1);
         String kenttaTyyppiNimi = switch (kenttaTyyppi) {
+            case 0 -> "Airport (civil/military)";
+            case 1 -> "Glider Site";
             case 2 -> "Civil Airfield";
             case 3 -> "International Airport";
+            case 4 -> "Heliport Military";
             case 5 -> "Military Airfield";
             case 6 -> "Ultra Light Airfield";
             case 8 -> "Closed Airfield";
             case 9 -> "Airport resp. Airfield IFR";
+            case 10 -> "Airfield Water";
+            case 11 -> "Landing Strip";
+            case 12 -> "Agricultural Landing Strip";
+            case 13 -> "Altiport";
             default -> "tuntematon";
         };
         slimProps.put("type", kenttaTyyppiNimi);
@@ -365,6 +523,7 @@ public class FlightPlanner {
                 int materialCode = rw.path("surface").path("mainComposite").asInt(-1);
                 String pinta = switch (materialCode) {
                     case 0 -> "asfaltti";
+                    case 1 -> "betoni";
                     case 2 -> "nurmi";
                     case 5 -> "sora";
                     case 12 -> "päällystetty";
@@ -451,22 +610,31 @@ public class FlightPlanner {
 
         String typeName = switch (typeCode) {
             case 0 -> "DME";
-            case 1 -> "VOR-DME";
+            case 1 -> "TACAN";
             case 2 -> "NDB";
-            case 3 -> "TACAN";
-            case 4 -> "VOR";
+            case 3 -> "VOR";
+            case 4 -> "VOR-DME";
             case 5 -> "VORTAC";
+            case 6 -> "DVOR";
             case 7 -> "DVOR-DME";
+            case 8 -> "DVORTAC";
             default -> "tuntematon";
         };
         props.put("typeName", typeName);
 
-        // Taajuus
+        // Taajuus (frequency)
         JsonNode freq = alkuperainen.properties.path("frequency");
         if (!freq.isMissingNode()) {
             ObjectNode f = mapper.createObjectNode();
             f.put("value", freq.path("value").asText(""));
-            f.put("unit", freq.path("unit").asInt(-1));
+
+            String unitStr = switch (freq.path("unit").asInt(-1)) {
+                case 1 -> "kHz";
+                case 2 -> "MHz";
+                default -> "tuntematon";
+            };
+            f.put("unit", unitStr);
+
             props.set("frequency", f);
         }
 
@@ -484,12 +652,18 @@ public class FlightPlanner {
             props.set("elevation", elev);
         }
 
-        // Kantama (jos saatavilla)
+        // Kantama (range)
         JsonNode range = alkuperainen.properties.path("range");
         if (!range.isMissingNode()) {
             ObjectNode r = mapper.createObjectNode();
             r.put("value", range.path("value").asInt(-1));
-            r.put("unit", range.path("unit").asInt(-1));
+
+            String unitStr = switch (range.path("unit").asInt(-1)) {
+                case 2 -> "NM";
+                default -> "tuntematon";
+            };
+            r.put("unit", unitStr);
+
             props.set("range", r);
         }
 
@@ -582,107 +756,6 @@ public class FlightPlanner {
             System.err.println("❌ GeoJSON-tiedoston tallennus epäonnistui: " + e.getMessage());
         }
     }
-
-
-    /**
-     * kirjoittaa GeoJson tiedoston parametrina tulevasta features(ilmatilat) listasta, karsii "turhat tiedot pois"
-     * @param features lista feature(ilmatila) olioita
-     */
-    public void kirjoitaGeoJson1(List<Feature> features) {
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode root = mapper.createObjectNode();
-        ArrayNode featureArray = mapper.createArrayNode();
-
-        for (Feature f : features) {
-            ObjectNode featureNode = mapper.createObjectNode();
-            featureNode.put("type", "Feature");
-
-            // Tarkka geometria
-            featureNode.set("geometry", f.geometry);
-
-            // Properties
-            ObjectNode slimProps = mapper.createObjectNode();
-            slimProps.put("name", f.properties.path("name").asText(""));
-            slimProps.put("type", f.properties.path("type").asInt(-1));
-
-            // Lower limit
-            JsonNode lower = f.properties.path("lowerLimit");
-            ObjectNode lowerNode = mapper.createObjectNode();
-            lowerNode.put("value", lower.path("value").asInt(-1));
-            lowerNode.put("unit", lower.path("unit").asInt(-1));
-            slimProps.set("lowerLimit", lowerNode);
-
-            // Upper limit
-            JsonNode upper = f.properties.path("upperLimit");
-            ObjectNode upperNode = mapper.createObjectNode();
-            upperNode.put("value", upper.path("value").asInt(-1));
-            upperNode.put("unit", upper.path("unit").asInt(-1));
-            slimProps.set("upperLimit", upperNode);
-
-            // Lisää byNotam vain jos true
-            if (f.properties.path("byNotam").asBoolean(false)) {
-                slimProps.put("byNotam", true);
-            }
-
-            // hoursOfOperation käsittely
-            JsonNode hours = f.properties.path("hoursOfOperation").path("operatingHours");
-            if (hours.isArray()) {
-                boolean kaikkiStandardia = true;
-
-                for (JsonNode h : hours) {
-                    if (!h.path("startTime").asText("").equals("00:00") ||
-                            !h.path("endTime").asText("").equals("00:00") ||
-                            h.path("byNotam").asBoolean(false) ||
-                            h.path("sunrise").asBoolean(false) ||
-                            h.path("sunset").asBoolean(false) ||
-                            h.path("publicHolidaysExcluded").asBoolean(false)) {
-                        kaikkiStandardia = false;
-                        break;
-                    }
-                }
-
-                if (kaikkiStandardia) {
-                    slimProps.put("hoursOfOperation", "24/7");
-                } else {
-                    // Sisällytä vain "essential" kentät per päivä
-                    ArrayNode slimmedHours = mapper.createArrayNode();
-                    for (JsonNode h : hours) {
-                        ObjectNode d = mapper.createObjectNode();
-                        d.put("dayOfWeek", h.path("dayOfWeek").asInt());
-                        d.put("startTime", h.path("startTime").asText());
-                        d.put("endTime", h.path("endTime").asText());
-
-                        // Lisää vain jos tarpeen
-                        if (h.path("byNotam").asBoolean(false)) d.put("byNotam", true);
-                        if (h.path("sunrise").asBoolean(false)) d.put("sunrise", true);
-                        if (h.path("sunset").asBoolean(false)) d.put("sunset", true);
-                        if (h.path("publicHolidaysExcluded").asBoolean(false)) d.put("publicHolidaysExcluded", true);
-
-                        slimmedHours.add(d);
-                    }
-
-                    ObjectNode hoursWrapper = mapper.createObjectNode();
-                    hoursWrapper.set("operatingHours", slimmedHours);
-                    slimProps.set("hoursOfOperation", hoursWrapper);
-                }
-            }
-
-            featureNode.set("properties", slimProps);
-            featureArray.add(featureNode);
-        }
-
-        root.put("type", "FeatureCollection");
-        root.set("features", featureArray);
-
-        try {
-            mapper.writerWithDefaultPrettyPrinter().writeValue(new File("suodatetutIlmatilat.geojson"), root);
-            System.out.println("✅ Tiivistetty GeoJSON tallennettu: suodatetutIlmatilat.geojson");
-        } catch (IOException e) {
-            System.err.println("❌ GeoJSON-tiedoston tallennus epäonnistui: " + e.getMessage());
-        }
-    }
-
-
 
 
     /**

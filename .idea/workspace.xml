@@ -97,7 +97,7 @@
       <recent name="C:\OmatProjektit\FPL_Project\Project\src\resources" />
     </key>
   </component>
-  <component name="RunManager" selected="JavaScript Debug.lentosuunnitelma_testi.html">
+  <component name="RunManager" selected="Application.FXML_FPLMain">
     <configuration name="FXML_FPLMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="fxFXML_FPL.FXML_FPLMain" />
       <module name="Project" />
@@ -132,8 +132,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JavaScript Debug.lentosuunnitelma_testi.html" />
         <item itemvalue="Application.FXML_FPLMain" />
+        <item itemvalue="JavaScript Debug.lentosuunnitelma_testi.html" />
         <item itemvalue="JavaScript Debug.FPL_Template2.html" />
         <item itemvalue="JavaScript Debug.FPL_Template.html" />
         <item itemvalue="JavaScript Debug.map.html (1)" />
@@ -162,7 +162,7 @@
       <workItem from="1748331095306" duration="14738000" />
       <workItem from="1749022711962" duration="1152000" />
       <workItem from="1749023890845" duration="91217000" />
-      <workItem from="1751613261930" duration="54090000" />
+      <workItem from="1751613261930" duration="69535000" />
     </task>
     <task id="LOCAL−00001" summary="Ensi commit">
       <option name="closed" value="true" />
