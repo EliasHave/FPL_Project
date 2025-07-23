@@ -14,10 +14,7 @@ import org.locationtech.jts.io.ParseException;
 import java.io.File;
 import java.io.IOException;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -31,12 +28,16 @@ import static FPL_Code.Point.etsiKoordinaatit;
  */
 public class FlightPlanner {
 
+    private String maaranpaaKentta;
     private Weather saaMaapanpaa;
     private Weather saaLahto;
     private Aircraft kone;
     private String notam;
     private Pilot pilot;
 
+    public void setMaaranpaaKentta(String maaranpaaKentta) {
+        this.maaranpaaKentta = maaranpaaKentta;
+    }
 
     public void setSaaLahto(Weather saa) {
         this.saaLahto = saa;
@@ -63,6 +64,10 @@ public class FlightPlanner {
     }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    public String getMaaranpaaKentta() {
+        return maaranpaaKentta;
+    }
 
     public Weather getSaaLahto() {
         return saaLahto;
@@ -148,6 +153,9 @@ public class FlightPlanner {
      */
     public List<Point> teeReitti(Point lahtoKoord, Point maaranpaaKoord) {
 
+        // maaranpaa kentän sää täytyy katsoa ja asettaa tässä koska nyt tiedetään nopeus ja matka yms jotta pystytään tarkemmin arviomaan monelta sää kannattaa ennustaa
+        asetaMaaranpaanSaa(lahtoKoord, maaranpaaKoord);
+
         List<Point> reittiPisteet = new ArrayList<>();
 
         Point lahtoPiste = lahtoKoord;
@@ -164,6 +172,37 @@ public class FlightPlanner {
 
         return reittiPisteet;
 
+    }
+
+
+    /**
+     * Asettaa määränpääkentän sään
+     * @param lahtoKoord
+     * @param maaranpaaKoord
+     */
+    public void asetaMaaranpaanSaa(Point lahtoKoord, Point maaranpaaKoord) {
+        // tässä täytyy tehdä määränpään sään hakeminen ja asettaminen koska sitä ei voi tehdä RouteControllerissa
+        // sillä siellä ei vielä tiedetä koneen nopeutta joka tarvitaan että voidaan arvioida monen aikaan sää kannattaa ennustaa
+        // tässä kohdassa tiedetään koneen nopeus ja pystytään arvioimaan moneltako sää kannattaa ennustaa sekä päästään käsiksi weather olioon
+        // aika = nykyaika + matka/nopeus
+        // Weather maaranpaanSaa = haeSaaOlio(maaranpaaKentta, aika)
+
+        ZonedDateTime lahtoHetki = saaLahto.getAjankohtaZDT();
+
+        // Lasketaan matkustusaika Duration-oliona
+        double matkaKM = haversineKm(lahtoKoord.getLat(), lahtoKoord.getLon(), maaranpaaKoord.getLat(), maaranpaaKoord.getLon());
+        double nopeusKMh = kone.getCruiseSpeed() * 1.852;
+        long minuutit = Math.round((matkaKM / nopeusKMh) * 60);
+        Duration kesto = Duration.ofMinutes(minuutit);
+
+        // Arvioitu saapumisaika = lähtöaika + lentoaika
+        ZonedDateTime lahtoHetkiUTC = lahtoHetki.withZoneSameInstant(ZoneOffset.UTC);
+        ZonedDateTime arvioituSaapumisaika = lahtoHetkiUTC.plus(kesto);
+
+        // String aikaStr = arvioituSaapumisaika.format(DateTimeFormatter.ofPattern("HH:mm"));
+
+        Weather maapanpaanSaa = Weather.haeSaaOlio(maaranpaaKentta, arvioituSaapumisaika);
+        this.saaMaapanpaa = maapanpaanSaa;
     }
 
 
@@ -802,6 +841,7 @@ public class FlightPlanner {
             pisteet.add(vasen);
         }
 
+        // lasketaan arvioitu saapumisaika mittauspisteeseen jotta voidaan arvioida paremmin säätä juuri sillä hetekllä kun se on oleellista
         laskeSaapumisAika(pisteet, lahto, maaranpaa);
 
         haeSaat(pisteet);

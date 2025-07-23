@@ -13,9 +13,11 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static FPL_Code.Weather.haeSaaOlio;
+import static FPL_Code.Weather.parseAjankohta;
 
 public class RouteGUIController {
 
@@ -50,12 +52,15 @@ public class RouteGUIController {
         String lahtoKentta = TF_LahtoKentta.getText();
         String maaranPaa = TF_MaaranPaa.getText();
 
-        Weather saaLahto = haeSaaOlio(lahtoKentta);
-        Weather saaMaaranPaa = haeSaaOlio(maaranPaa);
+        ZonedDateTime lahtoZDT = parseAjankohta(lahtoAika);
+
+        Weather saaLahto = haeSaaOlio(lahtoKentta, lahtoZDT);
+        // Weather saaMaaranPaa = haeSaaOlio(maaranPaa);
 
         FlightPlanner planner = FXML_FPLMain.getFlightPlanner();
         planner.setSaaLahto(saaLahto);
-        planner.setSaaMaapanpaa(saaMaaranPaa);
+        // planner.setSaaMaapanpaa(saaMaaranPaa);
+        planner.setMaaranpaaKentta(maaranPaa);
 
         String notamTeksti = FPL_Code.Notam.haeNotam("paikka");
 
@@ -67,7 +72,7 @@ public class RouteGUIController {
         planner.setNotam(notamTeksti);
 
         System.out.println(saaLahto);
-        System.out.println(saaMaaranPaa);
+        // System.out.println(saaMaaranPaa);
     }
 
 

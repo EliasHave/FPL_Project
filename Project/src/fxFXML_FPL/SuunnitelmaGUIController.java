@@ -55,10 +55,11 @@ public class SuunnitelmaGUIController {
         kirjaaKone();
         kirjaaNotam();
         kirjaaPilot();
-        kirjaaSaa();
+        // kirjaaSaa();
         setWebView();
         teeHTML();
         testaaAI();
+        kirjaaSaa();
     }
 
 
@@ -109,7 +110,8 @@ public class SuunnitelmaGUIController {
         String pohja = lueTemplate("/FPL_Template2.html");
 
         String lahto = planner.getSaaLahto().getPaikka();
-        String maaranpaa = planner.getSaaMaaranpaa().getPaikka();
+        // String maaranpaa = planner.getSaaMaaranpaa().getPaikka();  // tämä pitää ehkä korvata planner.getMaaranpaaKentta(); metodilla, os otetaan controllerista se sään luominen pois
+        String maaranpaa = planner.getMaaranpaaKentta();
         Point lahtoKoord = etsiKoordinaatit(lahto);
         Point maaranpaaKoord = etsiKoordinaatit(maaranpaa);
         System.out.println("lähtökentän tiedot: " + lahtoKoord);
