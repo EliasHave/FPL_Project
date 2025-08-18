@@ -193,7 +193,7 @@ public class Weather {
         saa.kasteP = hourly.getJSONArray("dew_point_2m").getDouble(indeksi);
         saa.ilmanP = hourly.getJSONArray("surface_pressure").getDouble(indeksi);
         saa.nakyvyys = hourly.getJSONArray("visibility").getInt(indeksi);
-        saa.tuuli = hourly.getJSONArray("windspeed_10m").getDouble(indeksi) + "KT";
+        saa.tuuli = hourly.getJSONArray("windspeed_10m").getDouble(indeksi) + "KT";  // tähän voisi lisätä sen tuulen suunnan
 
         JSONArray pilviArray = hourly.optJSONArray("cloud_cover");
         int pilviProsentti = 0;
@@ -213,6 +213,7 @@ public class Weather {
             saa.pilvet = "OVC";
         }
 
+        // nämä voisi tarkistaa oikeaksi
         int weatherCode = hourly.getJSONArray("weathercode").optInt(indeksi, -1);
         saa.sade = switch (weatherCode) {
             case 0 -> "NSW";

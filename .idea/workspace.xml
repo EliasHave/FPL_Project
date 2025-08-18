@@ -8,14 +8,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/FlightPlanner.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/FlightPlanner.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Project/src/FPL_Code/Weather.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/FPL_Code/Weather.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/RouteGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/RouteGUIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project/src/fxFXML_FPL/SuunnitelmaGUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Project/src/fxFXML_FPL/SuunnitelmaGUIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Project/FPL_Code/FlightPlanner$Feature.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/FPL_Code/FlightPlanner$Feature.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Project/FPL_Code/FlightPlanner$WeatherSamplePoint.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/FPL_Code/FlightPlanner$WeatherSamplePoint.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Project/FPL_Code/FlightPlanner.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/FPL_Code/FlightPlanner.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Project/FPL_Code/Weather.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/FPL_Code/Weather.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/RouteGUIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/RouteGUIController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/SuunnitelmaGUIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project/fxFXML_FPL/SuunnitelmaGUIController.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -170,7 +164,8 @@
       <workItem from="1748331095306" duration="14738000" />
       <workItem from="1749022711962" duration="1152000" />
       <workItem from="1749023890845" duration="91217000" />
-      <workItem from="1751613261930" duration="91166000" />
+      <workItem from="1751613261930" duration="95408000" />
+      <workItem from="1755500782299" duration="3165000" />
     </task>
     <task id="LOCAL−00001" summary="Ensi commit">
       <option name="closed" value="true" />

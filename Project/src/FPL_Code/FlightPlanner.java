@@ -109,7 +109,7 @@ public class FlightPlanner {
     public class WeatherSamplePoint {
         private double lat;
         private double lon;
-        private String aika;
+        private ZonedDateTime aika;
         private String ennusteTeksti = ""; // tähän voi myöhemmin laittaa sääkuvauksen/metarin jne.
         private Map<String, Object> forecastData;
 
@@ -120,14 +120,14 @@ public class FlightPlanner {
 
         public double getLat() { return lat; }
         public double getLon() { return lon; }
-        public String getAika() { return aika; }
+        public ZonedDateTime getAika() { return aika; }
         public String getEnnusteTeksti() { return ennusteTeksti; }
 
         public void setEnnusteTeksti(String teksti) {
             this.ennusteTeksti = teksti;
         }
 
-        public void setAika(String aika) {
+        public void setAika(ZonedDateTime aika) {
             this.aika = aika;
         }
 
@@ -859,30 +859,17 @@ public class FlightPlanner {
      * @param maaranpaa maaranpaapiste
      */
     public void laskeSaapumisAika(List<WeatherSamplePoint> pisteet, Point lahto, Point maaranpaa) {
-        double koneenNopeus = kone.getCruiseSpeed() * 1.852;  // muutetaan solmut km/h
+        double koneenNopeusKmh = kone.getCruiseSpeed() * 1.852;
 
-        LocalDateTime lahtoAika = LocalDateTime.now(); // Suomen paikallinen aika tai parametrina lähtöaika (Suomen aikaa)
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        ZonedDateTime lahtoAika = saaLahto.getAjankohtaZDT(); // esim. 2025-07-20T07:00+03:00
 
         for (WeatherSamplePoint p : pisteet) {
-            // Etäisyys lähtöpisteestä
-            double etaisyys = haversineKm(lahto.getLat(), lahto.getLon(), p.getLat(), p.getLon());
+            double etaisyysKm = haversineKm(lahto.getLat(), lahto.getLon(), p.getLat(), p.getLon());
+            double tunnit = etaisyysKm / koneenNopeusKmh;
+            long sekunnit = (long) (tunnit * 3600);
 
-            // Lentoajatuntina
-            double tunnit = etaisyys / koneenNopeus;
-
-            // Muunnetaan ajaksi
-            LocalDateTime arvioSaapuminen = lahtoAika.plusSeconds((long)(tunnit * 3600));
-
-            ZonedDateTime helsinki = arvioSaapuminen.atZone(ZoneId.of("Europe/Helsinki"));
-            ZonedDateTime utc = helsinki.withZoneSameInstant(ZoneOffset.UTC);
-
-            System.out.println("🔹 Helsinki-aika: " + helsinki);
-            System.out.println("🔹 UTC-aika:      " + utc);
-
-
-            // Asetetaan aika WeatherSamplePointille
-            p.setAika(arvioSaapuminen.format(formatter)); // tai suoraan LocalDateTime
+            ZonedDateTime saapumisaika = lahtoAika.plusSeconds(sekunnit);
+            p.setAika(saapumisaika); // tallennetaan aikavyöhykkeen kanssa
         }
     }
 
@@ -893,7 +880,6 @@ public class FlightPlanner {
      */
     public void haeSaat(List<WeatherSamplePoint> pisteet) {
         ObjectMapper mapper = new ObjectMapper();
-
         boolean tehty = false;
 
         for (WeatherSamplePoint p : pisteet) {
@@ -901,20 +887,32 @@ public class FlightPlanner {
                 double lat = p.getLat();
                 double lon = p.getLon();
 
-                // Aika UTC:na
-                LocalDateTime local = LocalDateTime.parse(p.getAika());
-                ZonedDateTime zoned = local.atZone(ZoneId.of("Europe/Helsinki"));
-                ZonedDateTime utc = zoned.withZoneSameInstant(ZoneOffset.UTC);
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-                String utcAika = utc.truncatedTo(ChronoUnit.HOURS).format(formatter);
+                // Haetaan suoraan ZonedDateTime-oliona
+                ZonedDateTime aika = p.getAika(); // oletetaan että tämä ei ole null
+                ZonedDateTime utc = aika.withZoneSameInstant(ZoneOffset.UTC);
 
-                System.out.println("🌐 WeatherSamplePoint.getAika(): " + p.getAika());
+                // Pyöristetään lähimpään tuntiin
+                int minuutit = utc.getMinute();
+                ZonedDateTime pyoristetty;
+                if (minuutit >= 30) {
+                    // Jos yli puolen tunnin → seuraava tunti
+                    pyoristetty = utc.truncatedTo(ChronoUnit.HOURS).plusHours(1);
+                } else {
+                    // Muuten → alas tuntiin
+                    pyoristetty = utc.truncatedTo(ChronoUnit.HOURS);
+                }
+
+                // Formatoidaan
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+                String utcAika = pyoristetty.format(formatter);
+
+                System.out.println("🌐 WeatherSamplePoint.getAika(): " + aika);
                 System.out.println("🔄 Muunnettu UTC-aika: " + utcAika);
 
                 // API-kutsu
                 String url = String.format(
                         Locale.US,
-                        "https://api.open-meteo.com/v1/forecast?latitude=%.4f&longitude=%.4f&hourly=temperature_2m,cloudcover,visibility,windspeed_10m,precipitation,relative_humidity_2m,pressure_msl,dew_point_2m&timezone=UTC",
+                        "https://api.open-meteo.com/v1/forecast?latitude=%.4f&longitude=%.4f&hourly=temperature_2m,cloudcover,visibility,windspeed_10m,winddirection_10m,precipitation,relative_humidity_2m,pressure_msl,dew_point_2m&timezone=UTC",
                         lat, lon
                 );
 
@@ -952,6 +950,7 @@ public class FlightPlanner {
                 double pilvisyys = tuntiLista.path("cloudcover").get(indeksi).asDouble();
                 double visibility = tuntiLista.path("visibility").get(indeksi).asDouble();
                 double wind = tuntiLista.path("windspeed_10m").get(indeksi).asDouble();
+                double windDir = tuntiLista.path("winddirection_10m").get(indeksi).asDouble();
                 double sade = tuntiLista.path("precipitation").get(indeksi).asDouble();
                 double humidity = tuntiLista.path("relative_humidity_2m").get(indeksi).asDouble();
                 double paine = tuntiLista.path("pressure_msl").get(indeksi).asDouble();
@@ -965,6 +964,7 @@ public class FlightPlanner {
                 forecast.put("cloudCover_pct", pilvisyys);
                 forecast.put("visibility_m", visibility);
                 forecast.put("wind_mps", wind);
+                forecast.put("windDirection_deg", windDir);
                 forecast.put("precip_mm", sade);
                 forecast.put("humidity_pct", humidity);
                 forecast.put("pressure_hPa", paine);
@@ -979,7 +979,7 @@ public class FlightPlanner {
                 sb.append("Pilvikorkeus (laskennallinen): ").append(pilviFt).append(" ft AGL\n");
                 sb.append("Pilvisyys: ").append(tuntiLista.path("cloudcover").get(indeksi).asText()).append(" %\n");
                 sb.append("Näkyvyys: ").append(tuntiLista.path("visibility").get(indeksi).asText()).append(" m\n");
-                sb.append("Tuuli: ").append(tuntiLista.path("windspeed_10m").get(indeksi).asText()).append(" m/s\n");
+                sb.append("Tuuli: ").append(tuntiLista.path("windspeed_10m").get(indeksi).asText()).append(" m/s\n").append(" Suunta: ").append(tuntiLista.path("winddirection_10m").get(indeksi).asText()).append(" Deg\n");
                 sb.append("Sade: ").append(tuntiLista.path("precipitation").get(indeksi).asText()).append(" mm\n");
                 sb.append("Ilmankosteus: ").append(tuntiLista.path("relative_humidity_2m").get(indeksi).asText()).append(" %\n");
                 sb.append("Ilmanpaine: ").append(tuntiLista.path("pressure_msl").get(indeksi).asText()).append(" hPa");
