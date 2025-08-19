@@ -139,7 +139,7 @@ public class Weather {
         return "https://api.open-meteo.com/v1/forecast?" +
                 "latitude=" + lat +
                 "&longitude=" + lon +
-                "&hourly=temperature_2m,cloud_cover,visibility,windspeed_10m,weathercode,dew_point_2m,surface_pressure" +
+                "&hourly=temperature_2m,cloud_cover,visibility,windspeed_10m,winddirection_10m,weathercode,dew_point_2m,surface_pressure" +
                 "&timezone=UTC" +
                 "&start=" + aikaStr +
                 "&end=" + aikaStr;
@@ -193,7 +193,7 @@ public class Weather {
         saa.kasteP = hourly.getJSONArray("dew_point_2m").getDouble(indeksi);
         saa.ilmanP = hourly.getJSONArray("surface_pressure").getDouble(indeksi);
         saa.nakyvyys = hourly.getJSONArray("visibility").getInt(indeksi);
-        saa.tuuli = hourly.getJSONArray("windspeed_10m").getDouble(indeksi) + "KT";  // tähän voisi lisätä sen tuulen suunnan
+        saa.tuuli = hourly.getJSONArray("windspeed_10m").getDouble(indeksi) + "KT " + hourly.getJSONArray("winddirection_10m").getDouble(indeksi) + "deg";  // tähän voisi lisätä sen tuulen suunnan
 
         JSONArray pilviArray = hourly.optJSONArray("cloud_cover");
         int pilviProsentti = 0;
@@ -216,12 +216,43 @@ public class Weather {
         // nämä voisi tarkistaa oikeaksi
         int weatherCode = hourly.getJSONArray("weathercode").optInt(indeksi, -1);
         saa.sade = switch (weatherCode) {
-            case 0 -> "NSW";
-            case 51, 61, 80 -> "-RA";
-            case 53, 63, 81 -> "RA";
-            case 55, 65, 82 -> "+RA";
-            case 71, 73, 75 -> "SN";
-            default -> "ei tiedossa";
+            case 0 -> "NSW";                          // Clear sky
+            case 1, 2, 3 -> "NSW";                    // Mainly clear, partly cloudy, overcast (no significant weather)
+
+            case 45, 48 -> "FG";                      // Fog, rime fog
+
+            case 51 -> "-DZ";                         // Light drizzle
+            case 53 -> "DZ";                          // Moderate drizzle
+            case 55 -> "+DZ";                         // Dense drizzle
+
+            case 56 -> "FZDZ";                        // Light freezing drizzle
+            case 57 -> "+FZDZ";                       // Dense freezing drizzle
+
+            case 61 -> "-RA";                         // Slight rain
+            case 63 -> "RA";                          // Moderate rain
+            case 65 -> "+RA";                         // Heavy rain
+
+            case 66 -> "FZRA";                        // Light freezing rain
+            case 67 -> "+FZRA";                       // Heavy freezing rain
+
+            case 71 -> "-SN";                         // Slight snow
+            case 73 -> "SN";                          // Moderate snow
+            case 75 -> "+SN";                         // Heavy snow
+
+            case 77 -> "SG";                          // Snow grains
+
+            case 80 -> "-SHRA";                       // Slight rain showers
+            case 81 -> "SHRA";                        // Moderate rain showers
+            case 82 -> "+SHRA";                       // Violent rain showers
+
+            case 85 -> "SHSN";                        // Slight snow showers
+            case 86 -> "+SHSN";                       // Heavy snow showers
+
+            case 95 -> "TS";                          // Thunderstorm, slight or moderate
+            case 96 -> "TSGR";                        // Thunderstorm with slight hail
+            case 99 -> "+TSGR";                       // Thunderstorm with heavy hail
+
+            default -> "UNK";                         // Unknown / ei tiedossa
         };
 
         System.out.println(saa);

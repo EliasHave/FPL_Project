@@ -109,6 +109,7 @@ public class FlightPlanner {
     public class WeatherSamplePoint {
         private double lat;
         private double lon;
+        private double elevation; // tähän lasketaan lentokorkeus jolla arvioidaan että tämän pisteen kohdalla tullaan lentämään parempaa säänhakua varten
         private ZonedDateTime aika;
         private String ennusteTeksti = ""; // tähän voi myöhemmin laittaa sääkuvauksen/metarin jne.
         private Map<String, Object> forecastData;
@@ -120,8 +121,13 @@ public class FlightPlanner {
 
         public double getLat() { return lat; }
         public double getLon() { return lon; }
+        public double getElevation() { return elevation; }
         public ZonedDateTime getAika() { return aika; }
         public String getEnnusteTeksti() { return ennusteTeksti; }
+
+        public void setElevation(double elevation) {
+            this.elevation = elevation;
+        }
 
         public void setEnnusteTeksti(String teksti) {
             this.ennusteTeksti = teksti;
@@ -163,12 +169,17 @@ public class FlightPlanner {
         List<Feature> kaikkiIlmatilat = lataaIlmatilatGeoJsonista();
         List<Feature> olennaisetIlmatilat = suodataIlmatilat(kaikkiIlmatilat, lahtoPiste, maaranpaaPiste, 50.0);
 
-        suodataIlmatilatJaKirjoitaGeoJson(olennaisetIlmatilat);
+        suodataIlmatilatJaKirjoitaGeoJson(olennaisetIlmatilat); // voisiko tämä palauttaa karsitut ilmatilat feature listana jotta on helppo viedä aliohjelmaan
 
-        suodataLentokentat(lahtoPiste, maaranpaaPiste);
+        suodataLentokentat(lahtoPiste, maaranpaaPiste); // Sama näissä kahdessa
         suodataNavaidit(lahtoPiste, maaranpaaPiste);
 
         List<WeatherSamplePoint> saanMittausPisteet = kartoitaSaaReitilla(lahtoPiste, maaranpaaPiste);
+
+        // Tähän pitäisi mielellään saada ryöstettyä vielä notamit, koneen tiedot, pilotin tiedot jotta niiden kanssa voidaan mennä kirjoittamaan se input geoJson tiedosto
+
+        // kirjoitaInputGeoJson();
+        // kysyTekoälyltä();
 
         return reittiPisteet;
 
@@ -298,7 +309,7 @@ public class FlightPlanner {
             props.put("byNotam", true);
         }
 
-        // Aukioloajat kuten ennen
+        // Aukioloajat
         JsonNode hours = alkuperainen.properties.path("hoursOfOperation").path("operatingHours");
         if (hours.isArray()) {
             boolean kaikkiStandardia = true;
@@ -632,8 +643,8 @@ public class FlightPlanner {
 
     /**
      * aliohjelma joka karsii navaidien properties osiosta turhat tiedot pois
-     * @param alkuperainen
-     * @return
+     * @param alkuperainen alkuperäinen feature olio jolla on liikaa tietoa
+     * @return palauttaa uuden karsitun feature olion
      */
     private Feature karsiNavaidinProperties(Feature alkuperainen) {
         ObjectMapper mapper = new ObjectMapper();
@@ -770,7 +781,7 @@ public class FlightPlanner {
 
     /**
      * kirjoittaa parametrina tulevasta features listasta geoJson tiedoston. Ei karsi enää tässä vaiheessa mitään pois vaan kirjoittaa kaiken mitä fetaures listassa on
-     * @param features
+     * @param features features lista jossa on Feature olioita joilla on geometria ja ominaisuuksia. Tämä lista kirjoitetaan geoJson tiedostoon tyylitellysti
      */
     public void kirjoitaGeoJson(String tiedNimi, List<Feature> features) {
         ObjectMapper mapper = new ObjectMapper();
@@ -912,7 +923,14 @@ public class FlightPlanner {
                 // API-kutsu
                 String url = String.format(
                         Locale.US,
-                        "https://api.open-meteo.com/v1/forecast?latitude=%.4f&longitude=%.4f&hourly=temperature_2m,cloudcover,visibility,windspeed_10m,winddirection_10m,precipitation,relative_humidity_2m,pressure_msl,dew_point_2m&timezone=UTC",
+                        "https://api.open-meteo.com/v1/forecast?latitude=%.4f&longitude=%.4f"
+                                + "&hourly=temperature_2m,cloudcover,visibility,windspeed_10m,winddirection_10m,"
+                                + "precipitation,relative_humidity_2m,pressure_msl,dew_point_2m,"
+                                + "windspeed_1000hPa,winddirection_1000hPa,"
+                                + "windspeed_850hPa,winddirection_850hPa,temperature_850hPa,"
+                                + "windspeed_700hPa,winddirection_700hPa,temperature_700hPa,"
+                                + "windspeed_500hPa,winddirection_500hPa,temperature_500hPa"
+                                + "&timezone=UTC",
                         lat, lon
                 );
 
@@ -951,6 +969,18 @@ public class FlightPlanner {
                 double visibility = tuntiLista.path("visibility").get(indeksi).asDouble();
                 double wind = tuntiLista.path("windspeed_10m").get(indeksi).asDouble();
                 double windDir = tuntiLista.path("winddirection_10m").get(indeksi).asDouble();
+
+                double wind1000 = tuntiLista.path("windspeed_1000hPa").get(indeksi).asDouble();
+                double dir1000  = tuntiLista.path("winddirection_1000hPa").get(indeksi).asDouble();
+
+                double wind3000 = tuntiLista.path("windspeed_700hPa").get(indeksi).asDouble();
+                double dir3000  = tuntiLista.path("winddirection_700hPa").get(indeksi).asDouble();
+                double temp3000 = tuntiLista.path("temperature_700hPa").get(indeksi).asDouble();
+
+                double wind6000 = tuntiLista.path("windspeed_500hPa").get(indeksi).asDouble();
+                double dir6000  = tuntiLista.path("winddirection_500hPa").get(indeksi).asDouble();
+                double temp6000 = tuntiLista.path("temperature_500hPa").get(indeksi).asDouble();
+
                 double sade = tuntiLista.path("precipitation").get(indeksi).asDouble();
                 double humidity = tuntiLista.path("relative_humidity_2m").get(indeksi).asDouble();
                 double paine = tuntiLista.path("pressure_msl").get(indeksi).asDouble();
@@ -965,6 +995,14 @@ public class FlightPlanner {
                 forecast.put("visibility_m", visibility);
                 forecast.put("wind_mps", wind);
                 forecast.put("windDirection_deg", windDir);
+                forecast.put("wind_1000m_mps", wind1000);
+                forecast.put("windDir_1000m_deg", dir1000);
+                forecast.put("wind_3000m_mps", wind3000);
+                forecast.put("windDir_3000m_deg", dir3000);
+                forecast.put("temp_3000m_C", temp3000);
+                forecast.put("wind_6000m_mps", wind6000);
+                forecast.put("windDir_6000m_deg", dir6000);
+                forecast.put("temp_6000m_C", temp6000);
                 forecast.put("precip_mm", sade);
                 forecast.put("humidity_pct", humidity);
                 forecast.put("pressure_hPa", paine);
@@ -983,6 +1021,11 @@ public class FlightPlanner {
                 sb.append("Sade: ").append(tuntiLista.path("precipitation").get(indeksi).asText()).append(" mm\n");
                 sb.append("Ilmankosteus: ").append(tuntiLista.path("relative_humidity_2m").get(indeksi).asText()).append(" %\n");
                 sb.append("Ilmanpaine: ").append(tuntiLista.path("pressure_msl").get(indeksi).asText()).append(" hPa");
+                sb.append("\n--- Korkeusennusteet ---\n");
+                sb.append("1000 m: Tuuli ").append(wind1000).append(" m/s, Suunta ").append(dir1000).append("°\n");
+                sb.append("3000 m: Tuuli ").append(wind3000).append(" m/s, Suunta ").append(dir3000).append("°, Lämpö ").append(temp3000).append(" °C\n");
+                sb.append("6000 m: Tuuli ").append(wind6000).append(" m/s, Suunta ").append(dir6000).append("°, Lämpö ").append(temp6000).append(" °C\n");
+
 
                 p.setEnnusteTeksti(sb.toString());
 

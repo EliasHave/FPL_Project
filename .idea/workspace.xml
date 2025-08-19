@@ -99,7 +99,7 @@
       <recent name="C:\OmatProjektit\FPL_Project\Project\src\resources" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.FXML_FPLMain">
+  <component name="RunManager" selected="JavaScript Debug.lentosuunnitelma_testi.html">
     <configuration name="FXML_FPLMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="fxFXML_FPL.FXML_FPLMain" />
       <module name="Project" />
@@ -122,23 +122,18 @@
     <configuration name="lentosuunnitelma_testi.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/FPL_Project/lentosuunnitelma_testi.html" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
-    <configuration name="map.html (1)" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/FPL_Project/Project/map.html" useBuiltInWebServerPort="true">
-      <method v="2" />
-    </configuration>
     <list>
       <item itemvalue="Application.FXML_FPLMain" />
       <item itemvalue="JavaScript Debug.FPL_Template.html" />
       <item itemvalue="JavaScript Debug.FPL_Template2.html" />
       <item itemvalue="JavaScript Debug.lentosuunnitelma_testi.html" />
-      <item itemvalue="JavaScript Debug.map.html (1)" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.FXML_FPLMain" />
         <item itemvalue="JavaScript Debug.lentosuunnitelma_testi.html" />
+        <item itemvalue="Application.FXML_FPLMain" />
         <item itemvalue="JavaScript Debug.FPL_Template2.html" />
         <item itemvalue="JavaScript Debug.FPL_Template.html" />
-        <item itemvalue="JavaScript Debug.map.html (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -165,7 +160,7 @@
       <workItem from="1749022711962" duration="1152000" />
       <workItem from="1749023890845" duration="91217000" />
       <workItem from="1751613261930" duration="95408000" />
-      <workItem from="1755500782299" duration="3165000" />
+      <workItem from="1755500782299" duration="12756000" />
     </task>
     <task id="LOCAL−00001" summary="Ensi commit">
       <option name="closed" value="true" />
