@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lentosuunnitelma</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 1rem;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .section h2 {
+            margin-bottom: 0;
+        }
+
+        .columns {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .column {
+            flex: 1;
+            min-width: 280px;
+            background-color: #f0f0f0;
+            padding: 1rem;
+            border-radius: 6px;
+            white-space: pre-wrap;
+        }
+
+        .column h3 {
+            margin-top: 0;
+            font-size: 1.1rem;
+        }
+
+        #map {
+            width: 100%;
+            height: 400px;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 600px) {
+            #map {
+                height: 250px;
+            }
+        }
+
+        .legend {
+            background: white;
+            padding: 10px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="section">
+        <h1>Lentosuunnitelma</h1>
+        <p><strong>Lähtökenttä:</strong> {{DEPARTURE}} → <strong>Määränpää:</strong> {{DESTINATION}}</p>
+    </div>
+
+    <div class="section">
+        <h2>Reittikartta</h2>
+        <div id="map"></div>
+    </div>
+
+    <div class="section">
+        <h2>Sää</h2>
+        <div class="columns">
+            <div class="column"><h3>Lähtökenttä</h3>{{WX_LAHTO}}</div>
+            <div class="column"><h3>Reitillä</h3>{{WX_REITTI}}</div>
+            <div class="column"><h3>Määränpää</h3>{{WX_PAATE}}</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Notamit</h2>
+        <div class="columns">
+            <div class="column"><h3>Lähtökenttä</h3>{{NTM_LAHTO}}</div>
+            <div class="column"><h3>Reitillä</h3>{{NTM_REITTI}}</div>
+            <div class="column"><h3>Määränpää</h3>{{NTM_PAATE}}</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Ilma-alus</h2>
+        <div class="column">{{AIRCRAFT}}</div>
+    </div>
+
+    <div class="section">
+        <h2>Pilotti</h2>
+        <div class="column">{{PILOT}}</div>
+    </div>
+</div>
+
+<script>
+    const map = L.map('map').setView([60.1699, 24.9384], 6);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 🧭 Luokkien ja tyyppien käännös
+    const typeColorMap = {
+        1: "#ff0000",   // C
+        2: "#ffa500",   // D
+        3: "#999900",   // Rajoitettu
+        4: "#996600",   // Kielletty
+        5: "#00cccc",   // TMA
+        6: "#9900cc",   // CTR
+        7: "#00cc66",   // G
+        8: "#888888",   // Muut
+        12: "#888888",  // ADIZ
+        "default": "#888888"
+    };
+
+    // 🎨 Ilmatilan tyyli
+    function ilmatilaStyle(feature) {
+        const typeCode = feature.properties.type;
+        const color = typeColorMap[typeCode] || typeColorMap["default"];
+
+        return {
+            color: color,
+            fillColor: color,
+            weight: 1,
+            opacity: 0.8,
+            fillOpacity: 0.3
+        };
+    }
+
+    // 🔁 Korkeustekstien muotoilu
+    function formatAltitude(limit) {
+        if (!limit || typeof limit.value === 'undefined') return "N/A";
+        const units = {
+            0: "FT AMSL",
+            1: "FT AGL",
+            2: "FL",
+            3: "M AMSL",
+            4: "M AGL",
+            5: "UNL",
+            6: "FL"
+        };
+        return `${limit.value} ${units[limit.unit] || ""}`;
+    }
+
+    // 🗺️ Ilmatilat
+    fetch('fi_asp.geojson')
+        .then(res => res.json())
+        .then(data => {
+            L.geoJSON(data, {
+                style: ilmatilaStyle,
+                onEachFeature: (feature, layer) => {
+                    const name = feature.properties.name || "Nimetön";
+                    const type = feature.properties.type || "Tuntematon";
+                    const icao = feature.properties.icaoClass || "-";
+                    const floor = formatAltitude(feature.properties.lowerLimit);
+                    const ceiling = formatAltitude(feature.properties.upperLimit);
+
+                    layer.bindPopup(`
+                        <strong>${name}</strong><br>
+                        Tyyppi: ${type}<br>
+                        ICAO-luokka: ${icao}<br>
+                        Korkeus: ${floor} – ${ceiling}
+                    `);
+                }
+            }).addTo(map);
+        });
+
+    // Lentokentät
+    fetch('fi_apt.geojson')
+        .then(res => res.json())
+        .then(data => {
+            L.geoJSON(data, {
+                pointToLayer: (feature, latlng) =>
+                    L.circleMarker(latlng, {
+                        radius: 5,
+                        fillColor: "#0000ff",
+                        color: "#001133",
+                        weight: 1,
+                        opacity: 1,
+                        fillOpacity: 0.8
+                    }).bindPopup("Lentokenttä: " + (feature.properties.name || "Tuntematon"))
+            }).addTo(map);
+        });
+
+    // Navaidit
+    fetch('fi_nav.geojson')
+        .then(res => res.json())
+        .then(data => {
+            L.geoJSON(data, {
+                pointToLayer: (feature, latlng) =>
+                    L.circleMarker(latlng, {
+                        radius: 3,
+                        fillColor: "#00aa00",
+                        color: "#003300",
+                        weight: 1,
+                        opacity: 1,
+                        fillOpacity: 0.7
+                    }).bindPopup("Navaid: " + (feature.properties.name || "Tuntematon"))
+            }).addTo(map);
+        });
+
+    {{JS_POINTS}}
+
+    points.forEach(p => {
+        L.marker(p.coords).addTo(map).bindPopup(p.name);
+    });
+
+    L.polyline(points.map(p => p.coords), { color: 'blue' }).addTo(map);
+
+    // 📘 Legend
+    const legend = L.control({ position: "bottomright" });
+    legend.onAdd = function () {
+        const div = L.DomUtil.create("div", "legend");
+        const labels = {
+            1: "Class C",
+            2: "Class D",
+            3: "Rajoitettu",
+            4: "Kielletty",
+            5: "TMA",
+            6: "CTR",
+            7: "Class G",
+            12: "ADIZ",
+            "default": "Muu"
+        };
+        for (const [code, label] of Object.entries(labels)) {
+            const color = typeColorMap[code] || typeColorMap["default"];
+            div.innerHTML += `<div><span style="display:inline-block;width:12px;height:12px;background:${color};margin-right:6px;"></span>${label}</div>`;
+        }
+        return div;
+    };
+    legend.addTo(map);
+
+    setTimeout(() => map.invalidateSize(), 200);
+</script>
+
+</body>
+</html>
