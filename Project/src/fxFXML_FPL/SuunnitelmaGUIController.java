@@ -86,6 +86,9 @@ public class SuunnitelmaGUIController {
     }
 
 
+    /**
+     * lisää käyttöliittymään WebView elementtiin kartan
+     */
     public void setWebView() {
         if (mapInitialized) return;
 

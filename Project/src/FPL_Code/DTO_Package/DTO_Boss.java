@@ -11,9 +11,9 @@ import java.util.List;
 
 public class DTO_Boss {
 
-    private List<FlightPlanner.Feature> ilmatilatDTO;
-    private List<FlightPlanner.Feature> lentokentatDTO;
-    private List<FlightPlanner.Feature> navaiditDTO;
+    private List<Feature> ilmatilatDTO;
+    private List<Feature> lentokentatDTO;
+    private List<Feature> navaiditDTO;
     private List<WeatherSamplePointDTO> saaDTO;
     private List<NotamOlioDTO> notamitDTO;
     private Aircraft koneDTO;
@@ -22,7 +22,7 @@ public class DTO_Boss {
     private WeatherDTO saaMaaranpaaDTO;
 
 
-    public DTO_Boss(List<FlightPlanner.Feature> ilmatilat, List<FlightPlanner.Feature> lentokentat, List<FlightPlanner.Feature> navaidit, List<WeatherSamplePointDTO> saa, List<NotamOlioDTO> notamit, Aircraft kone, Pilot pilot, WeatherDTO saaLahto, WeatherDTO saaMaaranpaa) {
+    public DTO_Boss(List<Feature> ilmatilat, List<Feature> lentokentat, List<Feature> navaidit, List<WeatherSamplePointDTO> saa, List<NotamOlioDTO> notamit, Aircraft kone, Pilot pilot, WeatherDTO saaLahto, WeatherDTO saaMaaranpaa) {
         this.ilmatilatDTO = ilmatilat;
         this.lentokentatDTO = lentokentat;
         this.navaiditDTO = navaidit;
@@ -34,13 +34,13 @@ public class DTO_Boss {
         this.saaMaaranpaaDTO = saaMaaranpaa;
     }
 
-    public List<FlightPlanner.Feature> getIlmatilatDTO() {
+    public List<Feature> getIlmatilatDTO() {
         return ilmatilatDTO;
     }
-    public List<FlightPlanner.Feature> getLentokentatDTO() {
+    public List<Feature> getLentokentatDTO() {
         return lentokentatDTO;
     }
-    public List<FlightPlanner.Feature> getNavaiditDTO() {
+    public List<Feature> getNavaiditDTO() {
         return navaiditDTO;
     }
     public List<WeatherSamplePointDTO> getSaaDTO() {
@@ -63,6 +63,64 @@ public class DTO_Boss {
     }
 
 
+    /**
+     * Muotoilee DTO_Boss olion sisällön json tyyliseksi merkkijonoksi joka toimii myös tekoälyn inputtina
+     * @return
+     */
+    public String toAiInputString() {
+        ObjectMapper mapper = new ObjectMapper();
+
+        ObjectNode root = mapper.createObjectNode();
+
+        //Geometriat kuten ilmatilat ja lentokentätä
+        ArrayNode airspaces = mapper.createArrayNode();
+        if (ilmatilatDTO != null) {
+            ilmatilatDTO.forEach(f -> airspaces.add(mapper.valueToTree(f)));
+        }
+        root.set("airspaces", airspaces);
+
+        ArrayNode airports = mapper.createArrayNode();
+        if (lentokentatDTO != null) {
+            lentokentatDTO.forEach(f -> airports.add(mapper.valueToTree(f)));
+        }
+        root.set("airports", airports);
+
+        ArrayNode navaids = mapper.createArrayNode();
+        if (navaiditDTO != null) {
+            navaiditDTO.forEach(f -> navaids.add(mapper.valueToTree(f)));
+        }
+        root.set("navaids", navaids);
+
+        //Sääpisteet
+        ArrayNode weatherPoints = mapper.createArrayNode();
+        if (saaDTO != null) {
+            saaDTO.forEach(w -> weatherPoints.add(mapper.valueToTree(w)));
+        }
+        root.set("weather_points", weatherPoints);
+
+        //Notamit
+        ArrayNode notams = mapper.createArrayNode();
+        if (notamitDTO != null) {
+            notamitDTO.forEach(n -> notams.add(mapper.valueToTree(n)));
+        }
+        root.set("notams", notams);
+
+
+        root.set("aircraft", mapper.valueToTree(koneDTO));
+        root.set("pilot", mapper.valueToTree(pilotDTO));
+        root.set("departure_weather", mapper.valueToTree(SaaLahtoDTO));
+        root.set("arrival_weather", mapper.valueToTree(saaMaaranpaaDTO));
+
+        try {
+            return mapper
+                    .writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(root);
+        } catch (Exception e) {
+            throw new RuntimeException("AI input JSON generation failed", e);
+        }
+    }
+
+
 
     /**
      * Aliohjelma joka tekee dto versiot parametrina tulevista listoista/olioista
@@ -78,7 +136,7 @@ public class DTO_Boss {
      * @param saaLahto
      * @param saaMaaranpaa
      */
-    public static DTO_Boss haeDTO(java.util.List<FlightPlanner.Feature> ilmatilat, List<FlightPlanner.Feature> lentokentat, List<FlightPlanner.Feature> navaidit, List<FlightPlanner.WeatherSamplePoint> saa, List< Notam.NotamOlio> notamit, Aircraft kone, Pilot pilot, Weather saaLahto, Weather saaMaaranpaa) {
+    public static DTO_Boss haeDTO(java.util.List<Feature> ilmatilat, List<Feature> lentokentat, List<Feature> navaidit, List<WeatherSamplePoint> saa, List< Notam.NotamOlio> notamit, Aircraft kone, Pilot pilot, Weather saaLahto, Weather saaMaaranpaa) {
 
         List<NotamOlioDTO> notamitDTO = NotamOlioDTO.teeNotamitDTO(notamit);
         List<WeatherSamplePointDTO> saaDTO = WeatherSamplePointDTO.haeSaaPisteetDTO(saa);

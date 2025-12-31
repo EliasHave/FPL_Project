@@ -1,6 +1,7 @@
 package FPL_Code.DTO_Package;
 
 import FPL_Code.FlightPlanner;
+import FPL_Code.WeatherSamplePoint;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,13 +33,13 @@ public class WeatherSamplePointDTO {
     }
 
 
-    public static List<WeatherSamplePointDTO> haeSaaPisteetDTO(List<FlightPlanner.WeatherSamplePoint> saaPisteet) {
+    public static List<WeatherSamplePointDTO> haeSaaPisteetDTO(List<WeatherSamplePoint> saaPisteet) {
 
         List<WeatherSamplePointDTO> saatDTO = new ArrayList<>();
 
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
-        for (FlightPlanner.WeatherSamplePoint sP : saaPisteet) {
+        for (WeatherSamplePoint sP : saaPisteet) {
            double lat = sP.getLat();
            double lon = sP.getLon();
            ZonedDateTime aikaZDT = sP.getAika();

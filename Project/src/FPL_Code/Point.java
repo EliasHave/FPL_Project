@@ -10,6 +10,9 @@ public class Point {
     public String name;
     public double lat;
     public double lon;
+    public int alt;  //korkeus ft
+    public String perustelu;  //tekoälyn perustelu kyseiselle reittipisteelle(esim huonon sään tai kielletyn ilmatilan väistäminen)
+    public int wpNumber;  //Reittipisteen "järjestys numero"
 
     public Point(String name, double lat, double lon) {
         this.name = name;

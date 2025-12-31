@@ -25,7 +25,8 @@
 </head>
 <body>
 <div class="container">
-    <div class="section"><h1>Lentosuunnitelma</h1><p><strong>Lähtökenttä:</strong> {{DEPARTURE}} → <strong>Määränpää:</strong> {{DESTINATION}}</p></div>
+    <div class="section"><h1>Lentosuunnitelma</h1><p><strong>Lähtökenttä:</strong> {{DEPARTURE}} {{ETD}} → <strong>Määränpää:</strong> {{DESTINATION}} {{ETA}</p></div>
+    <div class="timestamp">{{LUOMIS_AIKA}}</div>
     <div class="section"><h2>Reittikartta</h2><div id="map"></div></div>
     <div class="section"><h2>Sää</h2><div class="columns">
         <div class="column"><h3>Lähtökenttä</h3>{{WX_LAHTO}}</div>
