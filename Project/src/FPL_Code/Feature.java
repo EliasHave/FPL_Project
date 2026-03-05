@@ -295,7 +295,6 @@ public class Feature {
 
 
     /**
-     * TODO: tämän voisi laittaa Feature luokkaan
      * aliohjelma joka karsii navaidien properties osiosta turhat tiedot pois
      * @return palauttaa uuden karsitun feature olion
      */

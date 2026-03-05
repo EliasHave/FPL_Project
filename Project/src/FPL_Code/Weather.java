@@ -343,53 +343,120 @@ public class Weather {
      * @param rivi rivi josta tiedot pilkotaan
      */
     public void teeOlio(String rivi) {
+        //Esikäsittely: METAR / SPECI / COR
         if (rivi.startsWith("METAR ") || rivi.startsWith("SPECI ") || rivi.startsWith("COR ")) {
             rivi = rivi.substring(rivi.indexOf(' ') + 1).trim();
         }
-        this.paikka = rivi.split(" ")[0];
-        this.ajankohta = rivi.split(" ")[1];
+
+        String[] sanat = rivi.split("\\s+");
+
+        //Pakolliset kentät
+        this.paikka = sanat[0];
+        this.ajankohta = sanat[1];
+
         try {
             this.ajankohtaZDT = parseAjankohta(this.ajankohta);
         } catch (Exception e) {
             System.err.println("Virhe aikamuodon parsimisessa: " + this.ajankohta);
             this.ajankohtaZDT = null;
         }
-        String[] sanat = rivi.split(" ");
+
+        //Oletusarvot
+        this.sade = "";
+        this.pilvet = null;
+        this.nakyvyys = -1;
+
+        boolean cavok = false;
+
+        //Varsinainen parsinta
         for (String s : sanat) {
-            if  (s.matches("\\d{5}KT") || s.matches("VRB\\d{2}KT") ) {
+
+            //Tuuli
+            if (s.matches("\\d{5}KT") || s.matches("VRB\\d{2}KT")) {
                 this.tuuli = s;
+                continue;
             }
-            if ( s.matches("^(VC)?[-+]?([A-Z]{2}){1,2}$") && this.sade.isEmpty() && !s.matches(paikka) ) {
-                System.out.println(this.sade);
+
+            // CAVOK
+            if (s.equals("CAVOK")) {
+                cavok = true;
+                this.nakyvyys = 10000;
+                this.pilvet = "CAVOK";
+                this.sade = "NONE";
+                continue;
+            }
+
+            // Lämpötila / kastepiste (M09/M13)
+            if (s.matches("M?\\d{2}/M?\\d{2}")) {
+                String[] osat = s.split("/");
+                this.temp = parseSignedTemp(osat[0]);
+                this.kasteP = parseSignedTemp(osat[1]);
+                continue;
+            }
+
+            // Ilmanpaine
+            if (s.matches("Q\\d{4}")) {
+                this.ilmanP = Double.parseDouble(s.substring(1));
+                continue;
+            }
+
+            // Näkyvyys metreinä (0000–9999)
+            if (!cavok && s.matches("\\d{4}")) {
+                this.nakyvyys = Integer.parseInt(s);
+                continue;
+            }
+
+            // Näkyvyys SM (US-muoto)
+            if (s.matches("\\d+SM")) {
+                int miles = Integer.parseInt(s.replace("SM", ""));
+                this.nakyvyys = miles * 1609;
+                continue;
+            }
+
+            // Pilvet (vain jos ei CAVOK)
+            if (!cavok &&
+                    (s.startsWith("FEW") || s.startsWith("SCT") ||
+                            s.startsWith("BKN") || s.startsWith("OVC"))) {
+                this.pilvet = s;
+                continue;
+            }
+
+            // Sade / ilmiöt (vain yksi, jos ei vielä asetettu)
+            if (this.sade.isEmpty() &&
+                    s.matches("^(VC)?[-+]?([A-Z]{2}){1,2}$") &&
+                    !s.equals(this.paikka)) {
                 this.sade = s;
             }
-            if ( s.contains("FEW") || s.contains("SCT") ||s.contains("BKN") || s.contains("OVC") ) {
-                this.pilvet = s;
-            }
-            if ( s.matches("[+-]?\\d{2}/[+-]?\\d{2}") ) {
-                this.temp = Double.parseDouble(s.split("/")[0]);
-                this.kasteP = Double.parseDouble(s.split("/")[1]);
-            }
-            if ( s.startsWith("Q") && s.length() == 5) {
-                this.ilmanP = Double.parseDouble(s.replace("Q", ""));
-            }
-            if (s.matches("\\d{4}") && !s.startsWith("Q")) {
-                this.nakyvyys = Integer.parseInt(s.replace("Q", ""));
-            } else if (s.matches("\\d+SM")) {
-                this.nakyvyys = Integer.parseInt(s.replace("\\d+SM", ""));
-            }
-            if (s.matches("TEMPO")) {
-                this.tempo = s;
-                for (int i = 0; i < sanat.length; i++) {
-                    if ( sanat[sanat.length - (1+i)].matches("TEMPO" ) ) {
-                        break;
-                    }
-                    this.tempo += " " + sanat[sanat.length - (1 + i)];
-                }
-            }
-
         }
 
+        //Fallbackit
+        if (this.nakyvyys < 0) {
+            this.nakyvyys = 0;
+        }
+
+        if (this.pilvet == null) {
+            this.pilvet = "ei tiedossa";
+        }
+
+        if (this.sade.isEmpty()) {
+            this.sade = "ei tiedossa";
+        }
+
+    }
+
+
+    /**
+     * Parseri joka tulkitsee metarissa olevat lämpötilat
+     * Jos alkaa M kirjaimella niin palautetaan - merkkinen arvo (pakkasta)
+     * Jos ei ole M etuliitetä niin läpötila on positiivinen
+     * @param t merkkijono joka ilmaisee lämpötilan celsius-asteina
+     * @return Palauttaa reaalilukuisen läpötilan oikealla etumerkillä (pakkasta tai ei)
+     */
+    private double parseSignedTemp(String t) {
+        if (t.startsWith("M")) {
+            return -Double.parseDouble(t.substring(1));
+        }
+        return Double.parseDouble(t);
     }
 
 

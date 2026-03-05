@@ -150,7 +150,7 @@ public class FlightPlanner {
         DTO_Boss dtoData = DTO_Boss.haeDTO(olennaisetJaKarsitutIlmatilat, suodatetutLentokentat, suodatetutNavaidit, saanMittausPisteet, notamOliot, kone, pilot, saaLahto, saaMaapanpaa);
 
         AIAgent agent = new AIAgent();// tämä tekoäly agentti ohjaa tekoälyltä kysymisen, parsimisen, tarkastuksen/validoinnin yms
-        reittiPisteet = agent.reitita(dtoData);
+        // reittiPisteet = agent.reitita(dtoData);
         // kysyTekoalyltaOPENAI("flight_input..json");
         //kysyCLAUDE("flight_input..json");  // nyt kun data onkerätty ja jäsennelty sopivasti niin kysytään tekoälyä tekemään lentosuunnitelma
 
