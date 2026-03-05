@@ -1,6 +1,5 @@
 package fxFXML_FPL;
 
-import fi.jyu.mit.fxgui.Dialogs;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

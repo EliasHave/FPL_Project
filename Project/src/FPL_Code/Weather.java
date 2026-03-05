@@ -1,6 +1,5 @@
 package FPL_Code;
 
-import fi.jyu.mit.ohj2.Mjonot;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -87,7 +86,7 @@ public class Weather {
         Weather saa = new Weather();
         StringBuilder rivi = new StringBuilder(haeSaaTiedote(paikka));
         System.out.println(rivi);
-        String raw = Mjonot.erota(rivi, '\n');
+        String raw = erotaEnsimmainenRivi(rivi);
         saa.teeOlio(raw);
         String taf = rivi.toString();
         System.out.println(taf);
@@ -145,7 +144,7 @@ public class Weather {
         Weather saa = new Weather();
         StringBuilder rivi = new StringBuilder(raaka);
 
-        String raw = Mjonot.erota(rivi, '\n');
+        String raw = erotaEnsimmainenRivi(rivi);
         System.out.println("Erotettu METAR-rivi: " + raw);
         System.out.println("Erotettu TAF-jatko: " + rivi);
 
@@ -510,5 +509,26 @@ public class Weather {
         }
 
     }
+
+
+    /**
+     * Erottaa ja palauttaa ensimmäisen rivin StringBuilder-oliosta ja poistaa sen siitä.
+     * Korvaa Mjonot.erota(rivi, '\n') toiminnon.
+     * @param rivi StringBuilder josta ensimmäinen rivi erotetaan
+     * @return ensimmäinen rivi merkkijonona
+     */
+    private static String erotaEnsimmainenRivi(StringBuilder rivi) {
+        int index = rivi.indexOf("\n");
+        if (index >= 0) {
+            String eka = rivi.substring(0, index);
+            rivi.delete(0, index + 1);
+            return eka;
+        }
+        String eka = rivi.toString();
+        rivi.setLength(0);
+        return eka;
+    }
+
+
 
 }
