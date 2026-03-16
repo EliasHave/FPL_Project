@@ -1,0 +1,33 @@
+POST http://localhost:8080/api/flight/suunnittele
+Content-Type: application/json
+
+{
+  "lahtoKentta": "EFJY",
+  "maaranpaa": "EFHK",
+  "lahtoAika": "21:00",
+  "rekNro": "OH-ABC",
+  "koneTyyppi": "C172",
+  "kategoria": "SEP",
+  "cruiseSpeed": 110,
+  "climbRate": 700,
+  "maxAltitude": 5000,
+  "kulutus": 30,
+  "range": 800,
+  "maxFlightTime": 4,
+  "tankSize": 200,
+  "usableFuel": 190,
+  "reserve": 45,
+  "emptyWeight": 700,
+  "mtow": 1150,
+  "usefulLoad": 450,
+  "payLoad": 300,
+  "transponder": "Mode C",
+  "gps": "Garmin 430",
+  "radio": "Bendix King",
+  "nimi": "Testi Pilotti",
+  "puhnro": "0401234567",
+  "sposti": "testi@testi.fi",
+  "syntymapaiva": "1990-01-01",
+  "kokemus": 250,
+  "lupakirja": "PPL"
+}
