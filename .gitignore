@@ -16,3 +16,11 @@ target/
 # OS files
 .DS_Store
 Thumbs.db.idea/
+
+# Lennon suunnitelma tiedostot
+Project/resources/static/suunnitelma_*.html
+
+# GeoJSON datatiedostot
+Project/resources/static/fi_apt.geojson
+Project/resources/static/fi_asp.geojson
+Project/resources/static/fi_nav.geojson
