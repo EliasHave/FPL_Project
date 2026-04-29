@@ -1,10 +1,237 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPL — Flight Planning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
+<header>
+    <div class="logo-mark">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0 0 11.5 2 1.5 1.5 0 0 0 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/>
+        </svg>
+    </div>
+    <h1>Flight Planner</h1>
+    <p>AI-avusteinen lentosuunnittelu</p>
+</header>
+
+<!-- Steps -->
+<div class="steps">
+    <div class="step active" id="step1" onclick="goTo(1)">
+        <div class="step-num">1</div>
+        <span class="step-label">Reitti</span>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step" id="step2" onclick="goTo(2)">
+        <div class="step-num">2</div>
+        <span class="step-label">Lentokone</span>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step" id="step3" onclick="goTo(3)">
+        <div class="step-num">3</div>
+        <span class="step-label">Pilotti</span>
+    </div>
+</div>
+
+<!-- Card -->
+<div class="card">
+
+    <!-- Panel 1: Reitti -->
+    <div class="panel active" id="panel1">
+        <div class="card-title">Reitti</div>
+        <div class="card-sub">Syötä lähtö- ja määränpääkenttä sekä lähtöaika</div>
+
+        <div class="form-grid">
+            <div class="field">
+                <label>Lähtökenttä (ICAO)</label>
+                <input type="text" id="lahtoKentta" placeholder="esim. EFJY" maxlength="4" oninput="this.value=this.value.toUpperCase(); updateRoute()">
+            </div>
+            <div class="field">
+                <label>Määränpää (ICAO)</label>
+                <input type="text" id="maaranpaa" placeholder="esim. EFHK" maxlength="4" oninput="this.value=this.value.toUpperCase(); updateRoute()">
+            </div>
+            <div class="field span-2">
+                <label>Lähtöaika (UTC)</label>
+                <input type="text" id="lahtoAika" placeholder="esim. 2026-03-16T10:00:00+02:00">
+            </div>
+        </div>
+
+        <div class="route-visual" id="routeVisual" style="margin-top:20px;">
+            <div class="route-dot"></div>
+            <span class="route-text" id="routeFrom">—</span>
+            <div class="route-line"></div>
+            <span class="route-text" id="routeTo">—</span>
+            <div class="route-dot end"></div>
+        </div>
+
+        <div class="btn-row">
+            <div></div>
+            <button class="btn btn-primary" onclick="goTo(2)">Jatka →</button>
+        </div>
+    </div>
+
+    <!-- Panel 2: Lentokone -->
+    <div class="panel" id="panel2">
+        <div class="card-title">Lentokone</div>
+        <div class="card-sub">Koneen tekniset tiedot ja varustelu</div>
+
+        <div class="form-grid">
+            <div class="field">
+                <label>Rekisterinumero</label>
+                <input type="text" id="rekNro" placeholder="esim. OH-ABC" oninput="this.value=this.value.toUpperCase()">
+            </div>
+            <div class="field">
+                <label>Konetyyyppi</label>
+                <input type="text" id="koneTyyppi" placeholder="esim. C172">
+            </div>
+            <div class="field">
+                <label>Kategoria</label>
+                <input type="text" id="kategoria" placeholder="esim. SEP">
+            </div>
+            <div class="field">
+                <label>Cruising Speed (kt)</label>
+                <input type="number" id="cruiseSpeed" placeholder="110">
+            </div>
+
+            <div class="section-label">Paino & Polttoaine</div>
+
+            <div class="field">
+                <label>MTOW (kg)</label>
+                <input type="number" id="mtow" placeholder="1150">
+            </div>
+            <div class="field">
+                <label>Tyhjäpaino (kg)</label>
+                <input type="number" id="emptyWeight" placeholder="700">
+            </div>
+            <div class="field">
+                <label>Tankki (l)</label>
+                <input type="number" id="tankSize" placeholder="200">
+            </div>
+            <div class="field">
+                <label>Käyttökelp. polttoaine (l)</label>
+                <input type="number" id="usableFuel" placeholder="190">
+            </div>
+            <div class="field">
+                <label>Kulutus (l/h)</label>
+                <input type="number" id="kulutus" placeholder="30">
+            </div>
+            <div class="field">
+                <label>Reservi (min)</label>
+                <input type="number" id="reserve" placeholder="45">
+            </div>
+
+            <div class="section-label">Suoritusarvot</div>
+
+            <div class="field">
+                <label>Nousuvauhti (ft/min)</label>
+                <input type="number" id="climbRate" placeholder="700">
+            </div>
+            <div class="field">
+                <label>Max korkeus (ft)</label>
+                <input type="number" id="maxAltitude" placeholder="10000">
+            </div>
+            <div class="field">
+                <label>Range (nm)</label>
+                <input type="number" id="range" placeholder="800">
+            </div>
+            <div class="field">
+                <label>Max lentoaika (h)</label>
+                <input type="number" id="maxFlightTime" placeholder="4">
+            </div>
+            <div class="field">
+                <label>Hyötykuorma (kg)</label>
+                <input type="number" id="payLoad" placeholder="300">
+            </div>
+            <div class="field">
+                <label>Useful load (kg)</label>
+                <input type="number" id="usefulLoad" placeholder="450">
+            </div>
+
+            <div class="section-label">Navigaatio & Varustelu</div>
+
+            <div class="field">
+                <label>GPS</label>
+                <input type="text" id="gps" placeholder="esim. Garmin 430">
+            </div>
+            <div class="field">
+                <label>VOR</label>
+                <input type="text" id="vor" placeholder="esim. KN-53">
+            </div>
+            <div class="field">
+                <label>Radio</label>
+                <input type="text" id="radio" placeholder="esim. Bendix King">
+            </div>
+            <div class="field">
+                <label>Transponderi</label>
+                <input type="text" id="transponder" placeholder="esim. Mode C">
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-ghost" onclick="goTo(1)">← Takaisin</button>
+            <button class="btn btn-primary" onclick="goTo(3)">Jatka →</button>
+        </div>
+    </div>
+
+    <!-- Panel 3: Pilotti -->
+    <div class="panel" id="panel3">
+        <div class="card-title">Pilotti</div>
+        <div class="card-sub">Lentäjän tiedot ja pätevyydet</div>
+
+        <div class="form-grid">
+            <div class="field span-2">
+                <label>Nimi</label>
+                <input type="text" id="nimi" placeholder="Etunimi Sukunimi">
+            </div>
+            <div class="field">
+                <label>Puhelinnumero</label>
+                <input type="tel" id="puhnro" placeholder="+358 40 1234567">
+            </div>
+            <div class="field">
+                <label>Sähköposti</label>
+                <input type="email" id="sposti" placeholder="pilotti@email.fi">
+            </div>
+            <div class="field">
+                <label>Syntymäaika</label>
+                <input type="text" id="syntymapaiva" placeholder="1990-01-01">
+            </div>
+            <div class="field">
+                <label>Kokemus (h)</label>
+                <input type="number" id="kokemus" placeholder="250">
+            </div>
+            <div class="field span-2">
+                <label>Lupakirjat & ratings</label>
+                <textarea id="lupakirja" placeholder="esim. PPL, Night, IR..."></textarea>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-ghost" onclick="goTo(2)">← Takaisin</button>
+            <button class="btn btn-submit" onclick="suunnitteleLento()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 19-7z"/>
+                </svg>
+                Tee lentosuunnitelma
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>AI analysoi reittiä ja säätietoja…</p>
+    </div>
+
+</div>
+
+
+<p class="footnote">AI Flight Planner · Elias Haverinen</p>
+
+<script src="script.js"></script>
 </body>
 </html>

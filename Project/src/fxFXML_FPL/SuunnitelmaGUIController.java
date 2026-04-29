@@ -108,7 +108,7 @@ public class SuunnitelmaGUIController {
     /**
      * Aliohjelma joka tekee nettisivun kyseisen lennon suunnitelmalle
      */
-    public void teeHTML() {
+    public String teeHTML() {
 
         String pohja = lueTemplate("/FPL_Template2.html");
 
@@ -154,13 +154,17 @@ public class SuunnitelmaGUIController {
         // 5. Korvaa points[] JavaScriptin sisällä (hakusana on vaikka "const points = [...")
         // pohja = pohja.replaceAll("const points = \\[[^\\]]*\\];", jsPoints);
 
+        return pohja;
+
         // 6. Tallenna tiedostoksi
+        /**
         try (PrintWriter writer = new PrintWriter("lentosuunnitelma_testi.html", StandardCharsets.UTF_8)) {
             writer.write(pohja);
             System.out.println("✅ HTML-tiedosto tallennettu!");
         } catch (IOException e) {
             System.err.println("❌ Tallennus epäonnistui: " + e.getMessage());
         }
+            **/
     }
 
 

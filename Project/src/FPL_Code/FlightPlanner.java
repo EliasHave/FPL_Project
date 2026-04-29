@@ -1,12 +1,6 @@
 package FPL_Code;
 
-import FPL_Code.Aircraft;
 import FPL_Code.DTO_Package.DTO_Boss;
-import FPL_Code.DTO_Package.NotamOlioDTO;
-import FPL_Code.DTO_Package.WeatherDTO;
-import FPL_Code.DTO_Package.WeatherSamplePointDTO;
-import FPL_Code.Weather;
-import FPL_Code.Notam;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -14,8 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.locationtech.jts.geom.*;
-import org.locationtech.jts.io.geojson.GeoJsonReader;
-import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.geojson.GeoJsonReader;;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +25,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-import static FPL_Code.Point.etsiKoordinaatit;
 
 /**
  * luokka joka laskee tekoälyn avulla lentosuunnitelmia
@@ -41,6 +33,8 @@ import static FPL_Code.Point.etsiKoordinaatit;
  */
 public class FlightPlanner {
 
+    // mahdollisesti kannattaisi lisätä lähtö- ja määränpää Point oliona tähän attribuutiksi, jotta niihin pääsee helposti käsiksi missä
+    // tahansa metodissa eikä tarvitse hakea niitä erikseen sään kautta joka on huono tapa
     private String maaranpaaKentta;
     private Weather saaMaapanpaa;
     private Weather saaLahto;

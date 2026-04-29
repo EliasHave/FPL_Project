@@ -21,11 +21,29 @@
             box-shadow: 0 0 5px rgba(0,0,0,0.2);
             line-height: 1.4;
         }
+        @media print {
+            div[style*="position: fixed"] { display: none; }
+            #map { height: 400px; }
+        }
     </style>
 </head>
 <body>
+<div style="position: fixed; top: 16px; right: 16px; z-index: 9999;">
+    <button onclick="window.print()" style="
+        background: #1d1d1f;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 99px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        font-family: sans-serif;
+    ">⬇ Lataa PDF</button>
+</div>
 <div class="container">
-    <div class="section"><h1>Lentosuunnitelma</h1><p><strong>Lähtökenttä:</strong> {{DEPARTURE}} {{ETD}} → <strong>Määränpää:</strong> {{DESTINATION}} {{ETA}</p></div>
+    <div class="section"><h1>Lentosuunnitelma</h1><p><strong>Lähtökenttä:</strong> {{DEPARTURE}} {{ETD}} → <strong>Määränpää:</strong> {{DESTINATION}} {{ETA}}</p></div>
     <div class="timestamp">{{LUOMIS_AIKA}}</div>
     <div class="section"><h2>Reittikartta</h2><div id="map"></div></div>
     <div class="section"><h2>Sää</h2><div class="columns">
@@ -45,8 +63,8 @@
 <script>
 
     const map = L.map('map').setView([60.1699, 24.9384], 6);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO'
     }).addTo(map);
 
     map.createPane('routePane');
@@ -70,7 +88,7 @@
 
     const allAirspaces = [];
 
-    fetch('fi_asp.geojson')
+    fetch('/fi_asp.geojson')
         .then(res => res.json())
         .then(data => {
             const filtered = data.features.filter(f => !isTrivial(f.properties));
@@ -119,7 +137,7 @@
         });
 
     // Lentokentät
-    fetch('fi_apt.geojson')
+    fetch('/fi_apt.geojson')
         .then(res => res.json())
         .then(data => {
             const airportLayer = L.geoJSON(data, {
@@ -144,7 +162,7 @@
             setTimeout(() => airportLayer.eachLayer(l => l.bringToFront()), 500);
         });
 
-    fetch('fi_nav.geojson')
+    fetch('/fi_nav.geojson')
         .then(res => res.json())
         .then(data => {
             const navLayer = L.geoJSON(data, {
