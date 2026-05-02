@@ -98,14 +98,15 @@ public class Weather {
 
     /**
      * hakee säätiedot parametrina tulevasta lentokentästä parametrina tulevann aikaan ja tekee siitä Weather olion
-     * @param paikka Paikka josta sää haetaan
-     * @param lahtoaikaZDT aika jona olisi tarkoitus lähteä
-     * @return
+     * @param paikka Paikka josta sää haetaan (Lentokentän ICAO-koodi)
+     * @param lahtoaikaZDT aika jona olisi tarkoitus lähteä(tai saapua) kentälle, ZonedDateTime-muodossa
+     * @return SaaOlio joka on luotu joko METAR-tiedotteen tai Open-Meteo-ennusteen perusteella riippuen siitä kuinka kaukana lahtoaika(tai saapumisaika) on nykyhetkestä
      */
     public static Weather haeSaaOlio(String paikka, ZonedDateTime lahtoaikaZDT) {
 
         // Normaali referenssihetki on nyt, Suomen ajassa jotta pystytään vertaamaan kannattako sää hakea metarilla vai ennusteella open meteosta
-        ZonedDateTime nyt = ZonedDateTime.now(ZoneId.of("Europe/Helsinki"));
+        // UTC ajassa kirjoitettu 28.4.2026
+        ZonedDateTime nyt = ZonedDateTime.now(ZoneId.of("UTC"));
 
         // Erotus tunteina
         long tuntierotus = Duration.between(nyt, lahtoaikaZDT).toHours();
@@ -125,16 +126,6 @@ public class Weather {
      * @return sääolio paikasta
      */
     public static Weather haeSaaOlio(String paikka) {
-        /**
-        Weather saa = new Weather();   // tehdään tyhjä sää-olio
-        StringBuilder rivi = new StringBuilder(haeSaaTiedote(paikka));   // haetaan säätiedot raakana tekstinä
-        String raw = Mjonot.erota(rivi, '\n');   // erotetaan raw ja taf osio
-        saa.teeOlio(raw);   // Laitetaan olion tiedoiksi säätiedot sen perusteella mitä raw teksti sisältää
-        String taf = rivi.toString();   // Loput alkuperäisestä tää tiedottesta laitetaan on taf
-        System.out.println("Tässä TAF: " + taf);
-        System.out.println(raw);
-        return saa;
-        **/
 
         System.out.println("=== Haetaan METAR-säätiedot kentälle " + paikka + " ===");
 
@@ -208,7 +199,7 @@ public class Weather {
         JSONArray ajatJson = hourly.getJSONArray("time");
 
         // Pyöristetään haettu aika tasatunniksi ja Helsingin aikavyöhykkeelle
-        ZonedDateTime pyoristettyAika = haettuAika.withZoneSameInstant(ZoneId.of("Europe/Helsinki"))
+        ZonedDateTime pyoristettyAika = haettuAika.withZoneSameInstant(ZoneId.of("UTC"))
                 .truncatedTo(ChronoUnit.HOURS);
         String pyoristettyAikaStr = pyoristettyAika.toLocalDateTime().toString(); // esim. 2025-07-20T14:00
 
@@ -229,7 +220,7 @@ public class Weather {
         saa.paikka = paikka;
         ZonedDateTime zdtUTC = pyoristettyAika.withZoneSameInstant(ZoneOffset.UTC);
         saa.ajankohtaZDT = zdtUTC;
-        saa.ajankohta = zdtUTC.withZoneSameInstant(ZoneId.of("Europe/Helsinki"))
+        saa.ajankohta = zdtUTC.withZoneSameInstant(ZoneId.of("UTC"))
                 .format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
 
         saa.temp = hourly.getJSONArray("temperature_2m").getDouble(indeksi);
@@ -496,9 +487,10 @@ public class Weather {
         if (ajankohtaStr.matches("\\d{1,2}:\\d{2}")) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm");
             LocalTime time = LocalTime.parse(ajankohtaStr, formatter);
-            LocalDate today = LocalDate.now(ZoneId.of("Europe/Helsinki"));
-            ZonedDateTime helsinkiTime = ZonedDateTime.of(today, time, ZoneId.of("Europe/Helsinki"));
-            return helsinkiTime.withZoneSameInstant(ZoneOffset.UTC);  // <- Palautetaan UTC-aikaan muunnettuna
+            LocalDate today = LocalDate.now(ZoneId.of("UTC"));
+            ZonedDateTime UTCTime = ZonedDateTime.of(today, time, ZoneId.of("UTC"));
+            // return UTCTime.withZoneSameInstant(ZoneOffset.UTC);  // <- Palautetaan UTC-aikaan muunnettuna
+            return UTCTime;
         }
 
         // Jos ISO 8601 -muoto esim. "2025-07-20T12:30+03:00"

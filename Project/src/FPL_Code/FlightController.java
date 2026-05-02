@@ -18,6 +18,15 @@ import static FPL_Code.Weather.parseAjankohta;
 @RequestMapping("/api/flight")
 public class FlightController {
 
+    // Injektoidaan AviationDataService joka lataa ilmailutiedot GCS:stä Spring Bootin käynnistyessä.
+    // Tämä service tarjoaa (melkein) maailmanlaajuisen ilmatila-, lentokenttä- ja navaid-datan muistista,
+    // jolloin FlightPlanner voi suodattaa reitille olennaiset kohteet ilman tiedostolukuja.
+    private final AviationDataService aviationDataService;
+
+    public FlightController(AviationDataService aviationDataService) {
+        this.aviationDataService = aviationDataService;
+    }
+
     @GetMapping("/test")
     public ResponseEntity<String> test() {
         return ResponseEntity.ok("FPL API toimii!");
@@ -26,7 +35,10 @@ public class FlightController {
     @PostMapping("/suunnittele")
     public ResponseEntity<String> suunnitteleLento(@RequestBody FlightRequest request) {
         try {
-            FlightPlanner planner = new FlightPlanner();
+            // Luodaan FlightPlanner-instanssi ja injektoidaan siihen AviationDataService.
+            // Jokainen pyyntö saa oman FlightPlanner-instanssin jotta samanaikaiset
+            // käyttäjät eivät sekoita toistensa tietoja (thread-safety).
+            FlightPlanner planner = new FlightPlanner(aviationDataService);
 
             // Rakennetaan Aircraft-olio requestin tiedoista
             Aircraft kone = new Aircraft();
@@ -68,7 +80,6 @@ public class FlightController {
             Weather saaLahto = haeSaaOlio(request.getLahtoKentta(), lahtoZDT);
             // Weather saaMaaranPaa = haeSaaOlio(maaranPaa);
 
-            // FlightPlanner planner = FXML_FPLMain.getFlightPlanner();
             planner.setSaaLahto(saaLahto);
             // planner.setSaaMaapanpaa(saaMaaranPaa);
             planner.setMaaranpaaKentta(request.getMaaranpaa());

@@ -8,7 +8,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.locationtech.jts.geom.*;
-import org.locationtech.jts.io.geojson.GeoJsonReader;;
+import org.locationtech.jts.io.geojson.GeoJsonReader;
+import org.springframework.beans.factory.annotation.Autowired;;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +34,15 @@ import java.util.*;
  */
 public class FlightPlanner {
 
+    // AviationDataService injektoidaan konstruktorissa.
+    // Se tarjoaa (melkein) maailmanlaajuisen ilmailutietokannan muistista,
+    // josta voi suodattaa vain reitille olennaiset kohteet.
+    private final AviationDataService aviationDataService;
+
+    public FlightPlanner(AviationDataService aviationDataService) {
+        this.aviationDataService = aviationDataService;
+    }
+
     // mahdollisesti kannattaisi lisätä lähtö- ja määränpää Point oliona tähän attribuutiksi, jotta niihin pääsee helposti käsiksi missä
     // tahansa metodissa eikä tarvitse hakea niitä erikseen sään kautta joka on huono tapa
     private String maaranpaaKentta;
@@ -42,6 +52,10 @@ public class FlightPlanner {
     private String notam;
     private List<Notam.NotamOlio> notamOliot;
     private Pilot pilot;
+    private String relevantAirspacesGeoJson;
+    private  String relevantAirportsGeoJson;
+    private String relevantNavaidsGeoJson;
+
 
     public void setMaaranpaaKentta(String maaranpaaKentta) {
         this.maaranpaaKentta = maaranpaaKentta;
@@ -73,6 +87,10 @@ public class FlightPlanner {
 
     public void setPilot(Pilot pilot) {
         this.pilot = pilot;
+    }
+
+    public void setRelevantAirspacesGeoJson(String relevantAirspacesGeoJson) {
+        this.relevantAirspacesGeoJson = relevantAirspacesGeoJson;
     }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -109,6 +127,27 @@ public class FlightPlanner {
     public Pilot getPilot() {
         return pilot;
     }
+
+
+    public String getRelevantAirspacesGeoJson() {
+        return relevantAirspacesGeoJson;
+    }
+
+
+    public String getRelevantAirportsGeoJson() {
+        return relevantAirportsGeoJson;
+    }
+
+
+    public String getRelevantNavaidsGeoJson() {
+        return relevantNavaidsGeoJson;
+    }
+
+
+    public AviationDataService getAviationDataService() {
+        return aviationDataService;
+    }
+
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -324,16 +363,11 @@ public class FlightPlanner {
 
 
     /**
-     * Asettaa määränpääkentän sään
-     * @param lahtoKoord
-     * @param maaranpaaKoord
+     * Asettaa määränpääkentän sään laskemalla arvioitu saapumisaika lähtöhetkestä, matkan pituudesta ja koneen nopeudesta, ja hakee sitten sään tuolle arvioidulle saapumisajalle
+     * @param lahtoKoord Lähtöpiste Point oliona
+     * @param maaranpaaKoord Määränpääpiste Point oliona
      */
     public void asetaMaaranpaanSaa(Point lahtoKoord, Point maaranpaaKoord) {
-        // tässä täytyy tehdä määränpään sään hakeminen ja asettaminen koska sitä ei voi tehdä RouteControllerissa
-        // sillä siellä ei vielä tiedetä koneen nopeutta joka tarvitaan että voidaan arvioida monen aikaan sää kannattaa ennustaa
-        // tässä kohdassa tiedetään koneen nopeus ja pystytään arvioimaan moneltako sää kannattaa ennustaa sekä päästään käsiksi weather olioon
-        // aika = nykyaika + matka/nopeus
-        // Weather maaranpaanSaa = haeSaaOlio(maaranpaaKentta, aika)
 
         ZonedDateTime lahtoHetki = saaLahto.getAjankohtaZDT();
 
@@ -347,15 +381,14 @@ public class FlightPlanner {
         ZonedDateTime lahtoHetkiUTC = lahtoHetki.withZoneSameInstant(ZoneOffset.UTC);
         ZonedDateTime arvioituSaapumisaika = lahtoHetkiUTC.plus(kesto);
 
-        // String aikaStr = arvioituSaapumisaika.format(DateTimeFormatter.ofPattern("HH:mm"));
-
         Weather maapanpaanSaa = Weather.haeSaaOlio(maaranpaaKentta, arvioituSaapumisaika);
         this.saaMaapanpaa = maapanpaanSaa;
     }
 
 
     /**
-     * suodatta parametrina tulevasta fetaures (ilmatilat) listasta turhat kentätä pois ja kirjoittaa uuden geojson tiedoston näistä ilmatiloista
+     * suodatta parametrina tulevasta fetaures (ilmatilat) listasta turhat kentät/ominaisuudet pois
+     * Kirjoittaa uuden geojson tiedoston näistä ilmatiloista sekä tallentaa samassa geojson muodossa tämän datan plannerin relevantAirspacesGeoJson attribuuttiin jmyöhempää käyttöä varten
      * @param olennaisetIlmatilat Ilmatilojen lista jonka ilmatiloista halutaan karsia turhat tiedot pois
      */
     public List<Feature> suodataIlmatilatJaKirjoitaGeoJson(List<Feature> olennaisetIlmatilat) {
@@ -364,13 +397,24 @@ public class FlightPlanner {
         for (Feature f : olennaisetIlmatilat) {
             tiivistetyt.add(f.karsiIlmatilanProperties());
         }
-        kirjoitaGeoJson("suodatetutIlmatilat2.geojson", tiivistetyt);
+        // Muunnetaan GeoJSON-stringiksi
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode root = mapper.createObjectNode();
+            root.put("type", "FeatureCollection");
+            root.set("features", mapper.valueToTree(tiivistetyt));
+            this.relevantAirspacesGeoJson = mapper.writeValueAsString(root); // tallennetaan plannerin attribuutiksi myöhempää käyttöä varten
+        } catch (Exception e) {
+            this.relevantAirspacesGeoJson = "{\"type\":\"FeatureCollection\",\"features\":[]}";
+        }
+        this.relevantAirspacesGeoJson = kirjoitaGeoJson("suodatetutIlmatilat2.geojson", tiivistetyt);  //TODO 02.05.2026 miksi tässä asetetaan relevanAirspacesGeoJson toista kertaa???
         return tiivistetyt;
     }
 
 
     /**
-     * Suodattaa pois kaikki turhat ilmatilat joita ei tarvita reitillä
+     * Suodattaa pois geometrisesti kaikki turhat ilmatilat joita ei tarvita reitillä
+     * Ei kuitenkaa karsi ominaisuuksia pois tms
      * @param kaikkiIlmatilat Kaikki ilmatilat eli mukana myös mahdolisesti turhia
      * @param lahtoPiste Lähtöpiste, Point olio jolla koordinaatit
      * @param maaranpaaPiste Määränpääpiste, Point olio jolla koordinaatit
@@ -408,7 +452,8 @@ public class FlightPlanner {
 
 
     /**
-     * Lataa ilmatilat geoJson tiedostosta ja tekee niistä Feature olion sekä tallentaa oliot listaan joka palutetaan
+     * Lataa/hakee ilmatilat aviationDataService luokasa joka palauttaa ne String muodossa karsimattomana
+     * Tämä metodi tekee niistä Feature olioita sekä tallentaa oliot listaan joka palutetaan
      * @return palauttaa listan johon nämä luodut feature oliot on lisätty
      */
     public List<Feature> lataaIlmatilatGeoJsonista() {
@@ -416,7 +461,7 @@ public class FlightPlanner {
 
         try {
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(new File("fi_asp.geojson"));
+            JsonNode root = mapper.readTree(aviationDataService.getIlmatilatGeoJson());  //String muuttujasta tiedoston sijaan (sama geojson muoto)
 
             JsonNode featureNodes = root.get("features");
             for (JsonNode node : featureNodes) {
@@ -435,21 +480,21 @@ public class FlightPlanner {
 
 
     /**
-     * Suodattaa reitin kannalta olennaiset lentokentät GeoJSONista.
+     * Suodattaa reitin kannalta olennaiset lentokentät sekä karsii turhat ominaisuudet pois
+     * Lentokentät haetaan aviationDataServicen getLentokentatGeoJson metodilla joka palauttaa kaikki ladatut lentokentät geoJson muotoisena Stringinä
+     * @param lahtoPiste, Point olio jolla lähtöpisteen koordinaatit
+     *  @param maaranpaaPiste, Point olio jolla määränpään koordinaatit
+     * @return palauttaa Feature listan johon on lisätty reitin läheisyydessä olevat lentokentät karsittuna
      */
     public List<Feature> suodataLentokentat(Point lahtoPiste, Point maaranpaaPiste) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(new File("fi_apt.geojson"));  // oikea tiedosto
+            JsonNode root = mapper.readTree(aviationDataService.getLentokentatGeoJson());  //String muuttujasta tiedoston sijaan (sama geojson muoto)
 
             List<Feature> kaikkiKentat = new ArrayList<>();
             JsonNode features = root.get("features");
 
             for (JsonNode f : features) {
-                /**
-                JsonNode geom = f.get("geometry");
-                JsonNode props = f.get("properties");
-                 **/
                 JsonNode props = f.get("properties");
                 int tyyppi = props.path("type").asInt(-1);
 
@@ -468,7 +513,7 @@ public class FlightPlanner {
                 tiivistetyt.add(f.karsiLentokentanProperties());
             }
 
-            kirjoitaGeoJson("suodatetutLentokentat.geojson", tiivistetyt);
+            this.relevantAirportsGeoJson = kirjoitaGeoJson("suodatetutLentokentat.geojson", tiivistetyt);
             return tiivistetyt;
 
         } catch (IOException e) {
@@ -480,12 +525,15 @@ public class FlightPlanner {
 
 
     /**
-     * Suodattaa navaidit reitin läheltä.
+     * Suodattaa navaidit reitin läheltä ja karsii turhat ominaisuudet pois. Tallentaa suodatetut navaidit geojson muodossa plannerin relevantNavaidsGeoJson attribuuttiin myöhempää käyttöä varten
+     * @param lahtoPiste Lähtöpiste, Point olio jolla koordinaatit
+     *  @param maaranpaaPiste Määränpääpiste, Point olio jolla koordinaatit
+     * @return  palauttaa listan johon on lisätty reitin läheltä suodatetut navaidit, ja näissä navaideissa on vain olennaiset ominaisuudet jäljellä (karsittu versio)
      */
     public List<Feature> suodataNavaidit(Point lahtoPiste, Point maaranpaaPiste) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(new File("fi_nav.geojson"));
+            JsonNode root = mapper.readTree(aviationDataService.getNavaiditGeoJson());  //String muuttujasta tiedoston sijaan (sama geojson muoto)
 
             List<Feature> kaikkiNavaidit = new ArrayList<>();
             JsonNode features = root.get("features");
@@ -504,7 +552,7 @@ public class FlightPlanner {
                 tiivistetyt.add(f.karsiNavaidinProperties());
             }
 
-            kirjoitaGeoJson("suodatetutNavaidit.geojson", tiivistetyt);
+            this.relevantNavaidsGeoJson = kirjoitaGeoJson("suodatetutNavaidit.geojson", tiivistetyt);
             return tiivistetyt;
 
         } catch (IOException e) {
@@ -549,10 +597,10 @@ public class FlightPlanner {
 
 
     /**
-     * kirjoittaa parametrina tulevasta features listasta geoJson tiedoston. Ei karsi enää tässä vaiheessa mitään pois vaan kirjoittaa kaiken mitä fetaures listassa on
+     * kirjoittaa parametrina tulevasta features listasta geoJson tiedoston ja palauttaa sen String muodossa. Ei karsi enää tässä vaiheessa mitään pois vaan kirjoittaa kaiken mitä fetaures listassa on
      * @param features features lista jossa on Feature olioita joilla on geometria ja ominaisuuksia. Tämä lista kirjoitetaan geoJson tiedostoon tyylitellysti
      */
-    public void kirjoitaGeoJson(String tiedNimi, List<Feature> features) {
+    public String kirjoitaGeoJson(String tiedNimi, List<Feature> features) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode root = mapper.createObjectNode();
         ArrayNode featureArray = mapper.createArrayNode();
@@ -568,12 +616,21 @@ public class FlightPlanner {
         root.put("type", "FeatureCollection");
         root.set("features", featureArray);
 
+        String jsonString = "";
+
         try {
+            // Tallennetaan tiedostoon
             mapper.writerWithDefaultPrettyPrinter().writeValue(new File(tiedNimi), root);
-            System.out.println("✅ Suodatettu GeoJSON tallennettu: " + tiedNimi);
+            System.out.println("✅ GeoJSON tallennettu: " + tiedNimi);
+
+            // Palautetaan myös stringinä
+            jsonString = mapper.writeValueAsString(root);
         } catch (IOException e) {
-            System.err.println("❌ GeoJSON-tiedoston tallennus epäonnistui: " + e.getMessage());
+            System.err.println("❌ GeoJSON-käsittely epäonnistui: " + e.getMessage());
+            jsonString = "{\"type\":\"FeatureCollection\",\"features\":[]}";
         }
+
+        return jsonString;
     }
 
 

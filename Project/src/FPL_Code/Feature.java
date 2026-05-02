@@ -19,7 +19,6 @@ public class Feature {
 
 
     /**
-     * TODO: tämän voisi siirtää Feature Luokkaan
      * karsii parametrina tulevasta fetaure (ilmatila) oliosta turha kentät pois ja palauttaa karsitun feature olion
      * @return palauttaa uuden feature olion joka on karisittu veriso alkuperäisestä
      */
@@ -29,65 +28,12 @@ public class Feature {
 
         Feature alkuperainen = this;
 
-        // Nimi ja luokka
+        // Nimi
         props.put("name", alkuperainen.properties.path("name").asText(""));
 
-        int icaoTyyppi = alkuperainen.properties.path("icaoClass").asInt(-1);
-        String icaoClass = switch (icaoTyyppi) {
-            case 0  -> "A";
-            case 1  -> "B";
-            case 2  -> "C";
-            case 3  -> "D";
-            case 4  -> "E";
-            case 5  -> "F";
-            case 6  -> "G";
-            case 8  -> "Unclassified / Special Use Airspace (SUA)";
-            default -> "tuntematon";
-        };
-        props.put("icaoClass", icaoClass);
-
-        int tyyppi = alkuperainen.properties.path("type").asInt(-1);
-        String tyyppiKirjain = switch (tyyppi) {
-            case 0  -> "Other";
-            case 1  -> "Restricted";
-            case 2  -> "Danger";
-            case 3  -> "Prohibited";
-            case 4  -> "Controlled Tower Region (CTR)";
-            case 5  -> "Transponder Mandatory Zone (TMZ)";
-            case 6  -> "Radio Mandatory Zone (RMZ)";
-            case 7  -> "Terminal Maneuvering Area (TMA)";
-            case 8  -> "Temporary Reserved Area (TRA)";
-            case 9  -> "Temporary Segregated Area (TSA)";
-            case 10 -> "Flight Information Region (FIR)";
-            case 11 -> "Upper Flight Information Region (UIR)";
-            case 12 -> "Air Defense Identification Zone (ADIZ)";
-            case 13 -> "Airport Traffic Zone (ATZ)";
-            case 14 -> "Military Airport Traffic Zone (MATZ)";
-            case 15 -> "Airway";
-            case 16 -> "Military Training Route (MTR)";
-            case 17 -> "Alert Area";
-            case 18 -> "Warning Area";
-            case 19 -> "Protected Area";
-            case 20 -> "Helicopter Traffic Zone (HTZ)";
-            case 21 -> "Gliding Sector";
-            case 22 -> "Transponder Setting (TRP)";
-            case 23 -> "Traffic Information Zone (TIZ)";
-            case 24 -> "Traffic Information Area (TIA)";
-            case 25 -> "Military Training Area (MTA)";
-            case 26 -> "Control Area (CTA)";
-            case 27 -> "ACC Sector (ACC)";
-            case 28 -> "Aerial Sporting Or Recreational Activity";
-            case 29 -> "Low Altitude Overflight Restriction";
-            case 30 -> "Military Route (MRT)";
-            case 31 -> "TSA/TRA Feeding Route (TFR)";
-            case 32 -> "VFR Sector";
-            case 33 -> "FIS Sector";
-            case 34 -> "Lower Traffic Area (LTA)";
-            case 35 -> "Upper Traffic Area (UTA)";
-            case 36 -> "Military Controlled Tower Region (MCTR)";
-            default -> "tuntematon";
-        };
-        props.put("type", tyyppiKirjain);
+        // SÄILYTÄ NUMEROT — älä muunna stringeiksi!
+        props.put("icaoClass", alkuperainen.properties.path("icaoClass").asInt(-1));
+        props.put("type", alkuperainen.properties.path("type").asInt(-1));
 
         // Korkeudet
         props.set("lowerLimit", muodostaKorkeusNode(alkuperainen.properties.path("lowerLimit")));
@@ -98,7 +44,7 @@ public class Feature {
             props.put("byNotam", true);
         }
 
-        // Aukioloajat
+        // Aukioloajat (pidä sama logiikka)
         JsonNode hours = alkuperainen.properties.path("hoursOfOperation").path("operatingHours");
         if (hours.isArray()) {
             boolean kaikkiStandardia = true;
@@ -142,15 +88,10 @@ public class Feature {
     private static ObjectNode muodostaKorkeusNode(JsonNode korkeus) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode node = mapper.createObjectNode();
-        node.put("value", korkeus.path("value").asInt(-1));
 
-        int yksikko = korkeus.path("unit").asInt(-1);
-        String yksikkoStr = switch (yksikko) {
-            case 1 -> "ft MSL";
-            case 6 -> "FL";
-            default -> "tuntematon";
-        };
-        node.put("unit", yksikkoStr);
+        // Säilytä molemmat numeroina
+        node.put("value", korkeus.path("value").asInt(-1));
+        node.put("unit", korkeus.path("unit").asInt(-1)); // SÄILYTÄ NUMERONA!
 
         return node;
     }
