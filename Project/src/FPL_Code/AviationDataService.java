@@ -17,8 +17,7 @@ public class AviationDataService {
     private static final String GCS_BASE = "https://storage.googleapis.com/download/storage/v1/b/29f98e10-a489-4c82-ae5e-489dbcd4912f/o/";
 
     private static final List<String> MAAT = List.of(
-            "fi", "se", "no", "ee", "lv", "lt", "de", "fr", "gb", "es", "it",
-            "pl", "cz", "at", "ch", "nl", "be", "dk", "us"
+            "fi", "se", "no", "ee", "lv", "lt", "de"
     );
 
     private String ilmatilatGeoJson;
