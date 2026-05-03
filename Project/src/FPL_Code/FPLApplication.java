@@ -20,9 +20,15 @@ public class FPLApplication {
     public static class WebConfig implements WebMvcConfigurer {
         @Override
         public void addResourceHandlers(ResourceHandlerRegistry registry) {
+            // Staattinen sisältö (index.html, styles.css jne.)
             Path staticDir = Paths.get(System.getProperty("user.dir"), "Project", "resources", "static");
-            registry.addResourceHandler("/**")
-                    .addResourceLocations("file:" + staticDir.toAbsolutePath() + "/")
+            registry.addResourceHandler("/static/**")
+                    .addResourceLocations("file:" + staticDir.toAbsolutePath() + "/");
+
+            // Dynaamiset suunnitelmat temp-kansiosta
+            Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "fpl-suunnitelmat");
+            registry.addResourceHandler("/suunnitelma_*")
+                    .addResourceLocations("file:" + tempDir.toAbsolutePath() + "/")
                     .setCacheControl(CacheControl.noCache());
         }
     }

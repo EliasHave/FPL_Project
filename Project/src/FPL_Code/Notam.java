@@ -178,6 +178,7 @@ public class Notam {
         try {
             Document doc = Jsoup.connect("https://www.ais.fi/bulletins/efinen.htm")
                     .userAgent("Mozilla")
+                    .ignoreContentType(true) // Lisätty 2.5.2026 koska heitti errorin että tiedostotyyppi ei ole oikea
                     .get();
 
             StringBuilder notamBuilder = new StringBuilder();

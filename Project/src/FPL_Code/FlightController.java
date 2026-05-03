@@ -106,9 +106,15 @@ public class FlightController {
             String html = HTMLhandler.teeHTML(planner);
             String tiedostoNimi = "suunnitelma_" + System.currentTimeMillis() + ".html";
 
-            // Tallenna resources/static-kansioon
-            Path staticDir = Paths.get(System.getProperty("user.dir"), "Project", "resources", "static");
-            Files.writeString(staticDir.resolve(tiedostoNimi), html, StandardCharsets.UTF_8);
+            // Tallenna resources/static-kansioon (toimii omalla koneella)
+            //Path staticDir = Paths.get(System.getProperty("user.dir"), "Project", "resources", "static");
+            //Files.writeString(staticDir.resolve(tiedostoNimi), html, StandardCharsets.UTF_8);
+
+            // Käytetään temp-kansiota joka toimii kaikissa ympäristöissä
+            Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "fpl-suunnitelmat");
+            Files.createDirectories(tempDir);
+            Path tiedosto = tempDir.resolve(tiedostoNimi);
+            Files.writeString(tiedosto, html, StandardCharsets.UTF_8);
 
             return ResponseEntity.ok("/" + tiedostoNimi);
         } catch (Exception e) {
