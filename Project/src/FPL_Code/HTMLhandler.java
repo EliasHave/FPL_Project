@@ -48,11 +48,11 @@ public class HTMLhandler {
         // 5. Korvaa points[] JavaScriptin sisällä (hakusana on vaikka "const points = [...")
         //pohja = pohja.replaceAll("const points = \\[[^\\]]*\\];", jsPoints);
         pohja = pohja.replace("{{RELEVANT_AIRSPACES}}", planner.getRelevantAirspacesGeoJson());
-        pohja = pohja.replace("{{ALL_AIRSPACES}}", planner.getAviationDataService().getIlmatilatGeoJson());
+        //pohja = pohja.replace("{{ALL_AIRSPACES}}", planner.getAviationDataService().getIlmatilatGeoJson());
         pohja = pohja.replace("{{RELEVANT_AIRPORTS}}", planner.getRelevantAirportsGeoJson());
-        pohja = pohja.replace("{{ALL_AIRPORTS}}", planner.getAviationDataService().getLentokentatGeoJson());
+        //pohja = pohja.replace("{{ALL_AIRPORTS}}", planner.getAviationDataService().getLentokentatGeoJson());
         pohja = pohja.replace("{{RELEVANT_NAVAIDS}}", planner.getRelevantNavaidsGeoJson());
-        pohja = pohja.replace("{{ALL_NAVAIDS}}", planner.getAviationDataService().getNavaiditGeoJson());
+        //pohja = pohja.replace("{{ALL_NAVAIDS}}", planner.getAviationDataService().getNavaiditGeoJson());
 
         return pohja;
 

@@ -1,5 +1,7 @@
 package FPL_Code;
 
+import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
@@ -8,7 +10,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.time.Instant;
 
 import static FPL_Code.Point.etsiKoordinaatit;
 import static FPL_Code.Weather.haeSaaOlio;
@@ -23,14 +31,31 @@ public class FlightController {
     // jolloin FlightPlanner voi suodattaa reitille olennaiset kohteet ilman tiedostolukuja.
     private final AviationDataService aviationDataService;
 
+    // Muistissa oleva "varasto" valmiille suunnitelmille.
+    // Avain = UUID (esim. "a3f8c2d1-..."), arvo = valmis HTML-string.
+    private final Map<String, String> suunnitelmat = new ConcurrentHashMap<>();
+    // Tallennetaan myös suunnitelmien luontiajat, jotta vanhentuneet suunnitelmat voidaan poistaa säännöllisesti.
+    private final Map<String, Instant> luontiAjat = new ConcurrentHashMap<>();
+
     public FlightController(AviationDataService aviationDataService) {
         this.aviationDataService = aviationDataService;
     }
+
+
+    public Map<String, String> getSuunnitelmat() {
+        return suunnitelmat;
+    }
+
+    public Map<String, Instant> getLuontiAjat() {
+        return luontiAjat;
+    }
+
 
     @GetMapping("/test")
     public ResponseEntity<String> test() {
         return ResponseEntity.ok("FPL API toimii!");
     }
+
 
     @PostMapping("/suunnittele")
     public ResponseEntity<String> suunnitteleLento(@RequestBody FlightRequest request) {
@@ -104,21 +129,35 @@ public class FlightController {
             List<Point> reitti = planner.teeReitti(lahtoKoord, maaranpaaKoord);
 
             String html = HTMLhandler.teeHTML(planner);
-            String tiedostoNimi = "suunnitelma_" + System.currentTimeMillis() + ".html";
 
-            // Tallenna resources/static-kansioon (toimii omalla koneella)
-            //Path staticDir = Paths.get(System.getProperty("user.dir"), "Project", "resources", "static");
-            //Files.writeString(staticDir.resolve(tiedostoNimi), html, StandardCharsets.UTF_8);
+            // Luodaan uniikki ID tälle suunnitelmalle
+            String suunnitelmaId = UUID.randomUUID().toString();
 
-            // Käytetään temp-kansiota joka toimii kaikissa ympäristöissä
-            Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "fpl-suunnitelmat");
-            Files.createDirectories(tempDir);
-            Path tiedosto = tempDir.resolve(tiedostoNimi);
-            Files.writeString(tiedosto, html, StandardCharsets.UTF_8);
+            // Tallennetaan HTML muistiin tiedoston sijaan
+            suunnitelmat.put(suunnitelmaId, html);
+            luontiAjat.put(suunnitelmaId, Instant.now());
 
-            return ResponseEntity.ok("/" + tiedostoNimi);
+            // Palautetaan URL josta selain voi hakea suunnitelman
+            return ResponseEntity.ok("/suunnitelma/" + suunnitelmaId);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Virhe: " + e.getMessage());
         }
+    }
+
+
+    @Scheduled(fixedRate = 3_600_000) // pyörii tunnin välein
+    public void siivoaVanhatSuunnitelmat() {
+        Instant rajapyykki = Instant.now().minus(1, ChronoUnit.HOURS); //poisetaan tuntia vanhemmat suunnitelmat
+        int ennen = suunnitelmat.size();
+
+        luontiAjat.entrySet().removeIf(e -> {
+            if (e.getValue().isBefore(rajapyykki)) {
+                suunnitelmat.remove(e.getKey());
+                return true; // poistetaan myös luontiAjat-mapista
+            }
+            return false;
+        });
+
+        System.out.println("🧹 Siivous: poistettu " + (ennen - suunnitelmat.size()) + " vanhaa suunnitelmaa, jäljellä " + suunnitelmat.size());
     }
 }
