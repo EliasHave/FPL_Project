@@ -64,7 +64,10 @@ async function suunnitteleLento() {
             body: JSON.stringify(data)
         });
         const text = await res.text();
-        window.open(text.trim(), '_blank');
+        const url = text.trim();
+
+        // Ei uuteen välilehteen vaan samaan
+        window.location.href = url;
     } catch (err) {
         alert('Virhe: ' + err.message);
         document.getElementById('loading').classList.remove('visible');
