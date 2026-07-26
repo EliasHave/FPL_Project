@@ -15,7 +15,7 @@ target/
 
 # OS files
 .DS_Store
-Thumbs.db.idea/
+Thumbs.db
 
 # Lennon suunnitelma tiedostot
 Project/resources/static/suunnitelma_*.html

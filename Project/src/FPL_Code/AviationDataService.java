@@ -24,6 +24,13 @@ public class AviationDataService {
     private String lentokentatGeoJson;
     private String navaiditGeoJson;
 
+    /**
+     * TÄHÄN FEATURE OLIOT LISTANA KOSKA TÄMÄ ON SINGLETON JOTA KAIKKI VOIVAT KÄYTTÄÄ NIIN YKSITTÄISET PYYNNÖT EIVÄT TEE OMIA KOPIOITA SAMASTA TIEDOSTA
+     * Private List<Feature> ilmatilat;
+     * Private List<Feature> lentokentat;
+     * Private List<Feature> navaidit;
+     */
+
     private final ObjectMapper mapper = new ObjectMapper();
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
