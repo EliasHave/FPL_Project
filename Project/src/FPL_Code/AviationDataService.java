@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 public class AviationDataService {
 
-    private static final String GCS_BASE = "https://storage.googleapis.com/download/storage/v1/b/29f98e10-a489-4c82-ae5e-489dbcd4912f/o/";
+    private static final String GCS_BASE = "https://storage.openaip.net/openaip-system-exports/";
 
     private static final List<String> MAAT = List.of(
             "fi", "se", "no", "ee", "lv", "lt", "de"
@@ -55,7 +55,7 @@ public class AviationDataService {
 
         for (String maa : MAAT) {
             try {
-                String url = GCS_BASE + maa + "_" + tyyppi + ".geojson?alt=media";
+                String url = GCS_BASE + maa + "_" + tyyppi + ".geojson";
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))
                         .GET()
@@ -73,6 +73,7 @@ public class AviationDataService {
                     }
                 } else {
                     System.out.println("⚠️ " + maa + "_" + tyyppi + " ei löydy");
+                    System.out.println("response: " + response);
                 }
             } catch (Exception e) {
                 System.out.println("❌ Virhe ladattaessa " + maa + "_" + tyyppi + ": " + e.getMessage());
