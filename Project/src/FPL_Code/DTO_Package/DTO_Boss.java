@@ -145,8 +145,11 @@ public class DTO_Boss {
         // tähän pitäisi saada käskytykset yksittäisille dto luokille tekemään dto oliot parametrina tulevista normaaleista versioista
         DTO_Boss dtoPalautus = new DTO_Boss(ilmatilat, lentokentat, navaidit, saaDTO, notamitDTO, kone, pilot, saaLahtoDTO, saaMaaranpaaDTO);
 
+        /**
+         kirjoitetaan Geojson tiedostot joihin on kasattu kaikki oleellinen
         kirjoitaGeoJson(dtoPalautus,"features.geojson");
         kirjoitaHybridJson(dtoPalautus, "flight_input.json");
+         **/
 
         return dtoPalautus;
     }

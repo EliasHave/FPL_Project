@@ -161,6 +161,8 @@ public class FlightPlanner {
         // maaranpaa kentän sää täytyy katsoa ja asettaa tässä koska nyt tiedetään nopeus ja matka yms jotta pystytään tarkemmin arviomaan monelta sää kannattaa ennustaa
         asetaMaaranpaanSaa(lahtoKoord, maaranpaaKoord);
 
+        /*List<Notam.NotamOlio> NotamOliot = */ Notam.haeNotamOliotAPI(lahtoKoord, maaranpaaKoord);
+
         List<Point> reittiPisteet = new ArrayList<>();
 
         Point lahtoPiste = lahtoKoord;
@@ -457,6 +459,10 @@ public class FlightPlanner {
      * @return palauttaa listan johon nämä luodut feature oliot on lisätty
      */
     public List<Feature> lataaIlmatilatGeoJsonista() {
+
+        return aviationDataService.getIlmatilatFeatures();
+
+        /**
         List<Feature> features = new ArrayList<>();
 
         try {
@@ -476,6 +482,7 @@ public class FlightPlanner {
         }
 
         return features;
+         **/
     }
 
 
@@ -487,40 +494,24 @@ public class FlightPlanner {
      * @return palauttaa Feature listan johon on lisätty reitin läheisyydessä olevat lentokentät karsittuna
      */
     public List<Feature> suodataLentokentat(Point lahtoPiste, Point maaranpaaPiste) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(aviationDataService.getLentokentatGeoJson());  //String muuttujasta tiedoston sijaan (sama geojson muoto)
-
-            List<Feature> kaikkiKentat = new ArrayList<>();
-            JsonNode features = root.get("features");
-
-            for (JsonNode f : features) {
-                JsonNode props = f.get("properties");
-                int tyyppi = props.path("type").asInt(-1);
-
-                // Jätetään helikopterikentät (type == 7) pois
-                if (tyyppi == 7) continue;
-
-                JsonNode geom = f.get("geometry");
-                kaikkiKentat.add(new Feature(geom, props));
-            }
-
-            List<Feature> olennaiset = suodataPointFeaturesLahellaReittia(kaikkiKentat, lahtoPiste, maaranpaaPiste, 50.0);
-
-            // karsitaan turhat tiedot
-            List<Feature> tiivistetyt = new ArrayList<>();
-            for (Feature f : olennaiset) {
-                tiivistetyt.add(f.karsiLentokentanProperties());
-            }
-
-            this.relevantAirportsGeoJson = kirjoitaGeoJson("suodatetutLentokentat.geojson", tiivistetyt);
-            return tiivistetyt;
-
-        } catch (IOException e) {
-            System.err.println("❌ Lentokenttien suodatus epäonnistui: " + e.getMessage());
+        //käytetään valmiiksi parsittua listaa AviationDataServicestä
+        List<Feature> kaikkiKentat = new ArrayList<>();
+        for (Feature f : aviationDataService.getLentokentatFeatures()) {
+            int tyyppi = f.properties.path("type").asInt(-1);
+            if (tyyppi == 7) continue; // jätetään helikopterikentät pois
+            kaikkiKentat.add(f);
         }
 
-        return null;
+        List<Feature> olennaiset = suodataPointFeaturesLahellaReittia(
+                kaikkiKentat, lahtoPiste, maaranpaaPiste, 50.0);
+
+        List<Feature> tiivistetyt = new ArrayList<>();
+        for (Feature f : olennaiset) {
+            tiivistetyt.add(f.karsiLentokentanProperties());
+        }
+
+        this.relevantAirportsGeoJson = kirjoitaGeoJson("", tiivistetyt);
+        return tiivistetyt;
     }
 
 
@@ -531,34 +522,17 @@ public class FlightPlanner {
      * @return  palauttaa listan johon on lisätty reitin läheltä suodatetut navaidit, ja näissä navaideissa on vain olennaiset ominaisuudet jäljellä (karsittu versio)
      */
     public List<Feature> suodataNavaidit(Point lahtoPiste, Point maaranpaaPiste) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(aviationDataService.getNavaiditGeoJson());  //String muuttujasta tiedoston sijaan (sama geojson muoto)
+        // Käytetään valmiiksi parsittua listaa AviationDataServicestä
+        List<Feature> olennaiset = suodataPointFeaturesLahellaReittia(
+                aviationDataService.getNavaiditFeatures(), lahtoPiste, maaranpaaPiste, 50.0);
 
-            List<Feature> kaikkiNavaidit = new ArrayList<>();
-            JsonNode features = root.get("features");
-
-            for (JsonNode f : features) {
-                JsonNode geom = f.get("geometry");
-                JsonNode props = f.get("properties");
-                kaikkiNavaidit.add(new Feature(geom, props));
-            }
-
-            List<Feature> olennaiset = suodataPointFeaturesLahellaReittia(kaikkiNavaidit, lahtoPiste, maaranpaaPiste, 50.0);
-
-            // Tiivistys
-            List<Feature> tiivistetyt = new ArrayList<>();
-            for (Feature f : olennaiset) {
-                tiivistetyt.add(f.karsiNavaidinProperties());
-            }
-
-            this.relevantNavaidsGeoJson = kirjoitaGeoJson("suodatetutNavaidit.geojson", tiivistetyt);
-            return tiivistetyt;
-
-        } catch (IOException e) {
-            System.err.println("❌ Navaidien suodatus epäonnistui: " + e.getMessage());
+        List<Feature> tiivistetyt = new ArrayList<>();
+        for (Feature f : olennaiset) {
+            tiivistetyt.add(f.karsiNavaidinProperties());
         }
-        return null;
+
+        this.relevantNavaidsGeoJson = kirjoitaGeoJson("", tiivistetyt);
+        return tiivistetyt;
     }
 
 
@@ -619,9 +593,10 @@ public class FlightPlanner {
         String jsonString = "";
 
         try {
-            // Tallennetaan tiedostoon
+            /** Tallennetaan tiedostoon
             mapper.writerWithDefaultPrettyPrinter().writeValue(new File(tiedNimi), root);
             System.out.println("✅ GeoJSON tallennettu: " + tiedNimi);
+             **/
 
             // Palautetaan myös stringinä
             jsonString = mapper.writeValueAsString(root);
@@ -685,7 +660,7 @@ public class FlightPlanner {
         haeSaat(pisteet);
 
         // kirjoitetaan geojson tiedosto sääpisteistä.
-        kirjoitaSaapisteetGeoJson(pisteet);
+        // kirjoitaSaapisteetGeoJson(pisteet);
 
         return pisteet;
     }

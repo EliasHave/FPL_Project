@@ -12,6 +12,14 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.geojson.GeoJsonReader;
+
 /**
  * luokka jossa kerätään kaikki mahdollinen tieto liittyen esimerkiksi lähtö ja määränpää kenttien turvallisuudesta
  * Lajitellaan myös tietoja paikkojen perusteella ja mahdollisesti tehdään niistä selvemmin luettavia
@@ -56,6 +64,45 @@ public class Notam {
         }
     }
 
+
+    public static List<NotamOlio> haeNotamOliotAPI(FPL_Code.Point lahtoKoord, FPL_Code.Point maaranpaaKoord) {
+        List<NotamOlio> palautus = new ArrayList<>();
+        List<String> reitinFIRalueet = haeRisteavatFirKoodit(lahtoKoord, maaranpaaKoord); //haetaan kaikki FIR alueet mitkä ovat reitillä jotta voidaan hakea oikeat notamit
+        //String raakaNotam = haeRaakaNotam(maatValissa); //haetaan kaikkien maiden notamit mitä reitillä on ja liitetään ne yhdeksi massaksi
+        //String relevantitNotamit = karsiRaakaNotam(raakaNotam); //karsitaan kaikki turhat notamit pois eli jätetään mukaan vaan reitin kannalta olennaiset
+        //palautus = muodostaNotamOlioLista(relevantitNotamit); //nyt kun on kaikki relevantti tieto vain jäljellä niin muotoillaan se helposti käytettävään muotoon (NotamOlioiksi)
+        return palautus;
+    }
+
+
+    public static List<String> haeRisteavatFirKoodit(FPL_Code.Point lahtoKoord, FPL_Code.Point maaranpaaKoord) {
+        List<String> koodit = new ArrayList<>();
+        GeometryFactory gf = new GeometryFactory();
+        Coordinate[] lineCoords = new Coordinate[]{
+                new Coordinate(lahtoKoord.getLon(), lahtoKoord.getLat()),
+                new Coordinate(maaranpaaKoord.getLon(), maaranpaaKoord.getLat())
+        };
+
+        LineString reitti = gf.createLineString(lineCoords);
+        Geometry puskuri = reitti.buffer(50.0 / 111.32);
+
+        GeoJsonReader reader = new GeoJsonReader(gf);
+
+        /**
+        for (Feature f : kaikki) {
+            try {
+                Geometry geom = reader.read(f.geometry.toString());
+                if (puskuri.intersects(geom)) {
+                    olennaiset.add(f);
+                }
+            } catch (org.locationtech.jts.io.ParseException e) {
+                System.err.println("⚠️ Virhe geojson-geometriaa tulkittaessa: " + e.getMessage());
+            }
+        }
+         **/
+
+        return koodit;
+    }
 
     /**
      * tekee parametrina tulevasta notam tekstimössöstä Notam olioita joihin saadaan tallennettua kaikki olennainen tieto järjestelmällisesti

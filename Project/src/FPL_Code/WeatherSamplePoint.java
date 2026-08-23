@@ -97,6 +97,7 @@ public class WeatherSamplePoint {
             JsonNode tuntiLista = root.path("hourly");
             JsonNode ajat = tuntiLista.path("time");
 
+            /**
             if (!tehty) {
                 System.out.println("📅 Saatavilla olevat ajat:");
                 for (JsonNode a : ajat) {
@@ -104,6 +105,7 @@ public class WeatherSamplePoint {
                 }
                 tehty = true;   // tämä tulostaa ajat kaikile pisteille joka ei ole optimaalista
             }
+             **/
 
             int indeksi = -1;
             for (int i = 0; i < ajat.size(); i++) {

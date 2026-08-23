@@ -1,6 +1,7 @@
 package FPL_Code;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
@@ -24,12 +25,11 @@ public class AviationDataService {
     private String lentokentatGeoJson;
     private String navaiditGeoJson;
 
-    /**
-     * TÄHÄN FEATURE OLIOT LISTANA KOSKA TÄMÄ ON SINGLETON JOTA KAIKKI VOIVAT KÄYTTÄÄ NIIN YKSITTÄISET PYYNNÖT EIVÄT TEE OMIA KOPIOITA SAMASTA TIEDOSTA
-     * Private List<Feature> ilmatilat;
-     * Private List<Feature> lentokentat;
-     * Private List<Feature> navaidit;
-     */
+
+     //TÄHÄN FEATURE OLIOT LISTANA KOSKA TÄMÄ ON SINGLETON JOTA KAIKKI VOIVAT KÄYTTÄÄ NIIN YKSITTÄISET PYYNNÖT EIVÄT TEE OMIA KOPIOITA SAMASTA TIEDOSTA
+     private List<Feature> ilmatilatFeatures;
+     private List<Feature> lentokentatFeatures;
+     private List<Feature> navaiditFeatures;
 
     private final ObjectMapper mapper = new ObjectMapper();
     private final HttpClient httpClient = HttpClient.newHttpClient();
@@ -42,7 +42,13 @@ public class AviationDataService {
         lentokentatGeoJson = yhdista("apt");
         navaiditGeoJson = yhdista("nav");
 
-        System.out.println("✅ Ilmailutiedot ladattu!");
+        //parsitaan Feature (olio) muotoon
+        ilmatilatFeatures = parseFeaturesFromGeoJson(ilmatilatGeoJson);
+        lentokentatFeatures = parseFeaturesFromGeoJson(lentokentatGeoJson);
+        navaiditFeatures = parseFeaturesFromGeoJson(navaiditGeoJson);
+
+
+        System.out.println("✅ Ilmailutiedot ladattu");
     }
 
     /**
@@ -90,6 +96,27 @@ public class AviationDataService {
         }
     }
 
+
+    /**
+     * Metodi joka ottaa geoJson muotoisen ilmailudatan ja tekee siitä Feature (olio) listan
+     * @param geoJson Vastaanotettava ilmailudata geoJson muodossa (String tietotyyppi)
+     * @return palauttaa Feature listan parametrina tulleesta datasta
+     */
+    private List<Feature> parseFeaturesFromGeoJson(String geoJson) {
+        List<Feature> features = new ArrayList<>();
+        try {
+            JsonNode root = mapper.readTree(geoJson);
+            JsonNode featureNodes = root.get("features");
+            for (JsonNode node : featureNodes) {
+                features.add(new Feature(node.get("geometry"), node.get("properties")));
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Parsinta epäonnistui: " + e.getMessage());
+        }
+        return features;
+    }
+
+
     /**
      * Getteri joka palauttaa KAIKKI ladatut ilmatilat karsimattomana GeoJSON-muodossa (String). Tämä data on yhdistettynä kaikista maista, ja se on ladattu GCS:stä sovelluksen käynnistyessä.
      * @return String muodossa oleva GeoJSON, joka sisältää kaikki ladatut ilmatilat.
@@ -97,4 +124,8 @@ public class AviationDataService {
     public String getIlmatilatGeoJson() { return ilmatilatGeoJson; }
     public String getLentokentatGeoJson() { return lentokentatGeoJson; }
     public String getNavaiditGeoJson() { return navaiditGeoJson; }
+
+    public List<Feature> getIlmatilatFeatures() { return ilmatilatFeatures; }
+    public List<Feature> getLentokentatFeatures() { return lentokentatFeatures; }
+    public List<Feature> getNavaiditFeatures() { return navaiditFeatures; }
 }
