@@ -24,3 +24,6 @@ Project/resources/static/suunnitelma_*.html
 Project/resources/static/fi_apt.geojson
 Project/resources/static/fi_asp.geojson
 Project/resources/static/fi_nav.geojson
+
+# UML luokkakaavio
+*.uxf

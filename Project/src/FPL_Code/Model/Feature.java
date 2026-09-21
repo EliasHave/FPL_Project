@@ -1,4 +1,4 @@
-package FPL_Code;
+package FPL_Code.Model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,9 +8,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Feature {
     public JsonNode geometry;
     public JsonNode properties;
+
 
     public Feature(JsonNode geometry, JsonNode properties) {
         this.geometry = geometry;
@@ -98,7 +100,6 @@ public class Feature {
 
 
     /**
-     * TODO: tämän voisi myös laittaa Feature luokkaan
      * Karsii lentokenttä-Featuresta pois tekoälyn kannalta epäolennaiset tiedot ja palauttaa uuden Feature-olion.
      */
     public Feature karsiLentokentanProperties() {

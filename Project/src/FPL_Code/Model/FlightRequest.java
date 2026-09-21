@@ -1,5 +1,9 @@
-package FPL_Code;
+package FPL_Code.Model;
 
+
+/**
+ *
+ */
 public class FlightRequest {
 
     // Reitin tiedot

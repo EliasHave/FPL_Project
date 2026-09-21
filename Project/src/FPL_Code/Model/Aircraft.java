@@ -1,4 +1,4 @@
-package FPL_Code;
+package FPL_Code.Model;
 
 /**
  * luokka jossa kerätään kaikki mahdollinen tieto lentokoneesta jotta se voidaan käsitellä FlightPlanerin toimesta
@@ -246,17 +246,4 @@ public class Aircraft {
                 "Transponder: " + transponder + "|" + " GPS: " + GPS + "|" + " Radio: " + radio + "\n";
     }
 
-    public static void main(String[] args) {
-        Aircraft kone1 = new Aircraft();
-        System.out.println(kone1);
-        kone1.setKoneTyyppi("F18 C");
-        kone1.setCruiseSpeed(750);
-        kone1.setClimbRate(5000);
-        kone1.setRange(850);
-        kone1.setMTOW(41000);
-        kone1.setUsefulLoad(5000);
-        kone1.setPayLoad(5000);
-        kone1.setGPS("GPS");
-        System.out.println(kone1);
-    }
 }

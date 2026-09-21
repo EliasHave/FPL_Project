@@ -1,4 +1,5 @@
-package FPL_Code;
+package FPL_Code.Model;
+
 
 public class Pilot {
 
@@ -10,12 +11,12 @@ public class Pilot {
     int kokemus;
 
     public Pilot() {
-        String nimi = "";
-        String syntymaAika = "";
-        String sPosti = "";
-        String puhNro = "";
-        String lupaKirjat = "";
-        int kokemus = 0;
+        this.nimi = "";
+        this.syntymaAika = "";
+        this.sPosti = "";
+        this.puhNro = "";
+        this.lupaKirjat = "";
+        this.kokemus = 0;
     }
 
 
