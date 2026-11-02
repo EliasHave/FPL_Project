@@ -25,18 +25,18 @@ public class AiService {
         // 2. TÄHÄN TULEE API-KUTSU (Mockataan toistaiseksi MVP-hengessä)
 
         // Simuloitu LLM-vastaus
-        String llmJsonResponse = """
+        String llmJsonResponse = String.format(java.util.Locale.US, """
             {
                 "departure": "%s",
                 "destination": "%s",
                 "risk": "MEDIUM",
-                "safetyConcerns": "Sää on VFR ja reitti on selkeä. Lentäjän kokemus huomioiden suora reitti on turvallinen, mutta huomioi mahdolliset aktiiviset ilmatilat.",
+                "safetyConcerns": "Sää on VFR ja reitti on selkeä. Lentäjän kokemus huomioiden suora reitti on turvallinen, mutta huomioi mahdolliset aktiiviset ilmatilat. TESTI VASTAUS",
                 "reittiPisteet": [
-                    {"pointName": "%s", "lat": %.4f, "lon": %.4f},
-                    {"pointName": "%s", "lat": %.4f, "lon": %.4f}
+                    {"name": "%s", "lat": %.4f, "lon": %.4f},
+                    {"name": "%s", "lat": %.4f, "lon": %.4f}
                 ]
             }
-            """.formatted(
+            """,
                 paketti.getLahto().getPointName(),
                 paketti.getKohde().getPointName(),
                 paketti.getLahto().getPointName(), paketti.getLahto().getLat(), paketti.getLahto().getLon(),

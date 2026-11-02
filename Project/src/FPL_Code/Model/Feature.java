@@ -1,5 +1,6 @@
 package FPL_Code.Model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -8,17 +9,22 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Feature {
     public JsonNode geometry;
     public JsonNode properties;
-
 
     public Feature(JsonNode geometry, JsonNode properties) {
         this.geometry = geometry;
         this.properties = properties;
     }
 
+    /**
+     * Pakottaa Jacksonin tulostamaan {"type": "Feature"} Leaflet-karttaa varten.
+     */
+    @JsonProperty("type")
+    public String getType() {
+        return "Feature";
+    }
 
     /**
      * karsii parametrina tulevasta fetaure (ilmatila) oliosta turha kentät pois ja palauttaa karsitun feature olion
@@ -86,7 +92,6 @@ public class Feature {
         return new Feature(alkuperainen.geometry, props);
     }
 
-
     private static ObjectNode muodostaKorkeusNode(JsonNode korkeus) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode node = mapper.createObjectNode();
@@ -97,7 +102,6 @@ public class Feature {
 
         return node;
     }
-
 
     /**
      * Karsii lentokenttä-Featuresta pois tekoälyn kannalta epäolennaiset tiedot ja palauttaa uuden Feature-olion.
@@ -110,6 +114,7 @@ public class Feature {
         ObjectNode slimProps = mapper.createObjectNode();
         slimProps.put("name", alkuperainen.properties.path("name").asText(""));
         slimProps.put("icaoCode", alkuperainen.properties.path("icaoCode").asText(""));
+
         // Lentokentän tyyppi selkokielellä
         int kenttaTyyppi = alkuperainen.properties.path("type").asInt(-1);
         String kenttaTyyppiNimi = switch (kenttaTyyppi) {
@@ -133,11 +138,13 @@ public class Feature {
         // Traffic type (0 = VFR, 1 = IFR, 2 = VFR+IFR)
         ArrayNode trafficArray = (ArrayNode) alkuperainen.properties.path("trafficType");
         List<String> liikenneTyypit = new ArrayList<>();
-        for (JsonNode t : trafficArray) {
-            switch (t.asInt()) {
-                case 0 -> liikenneTyypit.add("VFR");
-                case 1 -> liikenneTyypit.add("IFR");
-                case 2 -> liikenneTyypit.add("VFR + IFR");
+        if (trafficArray != null) {
+            for (JsonNode t : trafficArray) {
+                switch (t.asInt()) {
+                    case 0 -> liikenneTyypit.add("VFR");
+                    case 1 -> liikenneTyypit.add("IFR");
+                    case 2 -> liikenneTyypit.add("VFR + IFR");
+                }
             }
         }
         if (!liikenneTyypit.isEmpty()) {
@@ -235,9 +242,9 @@ public class Feature {
         return new Feature(alkuperainen.geometry, slimProps);
     }
 
-
     /**
      * aliohjelma joka karsii navaidien properties osiosta turhat tiedot pois
+     *
      * @return palauttaa uuden karsitun feature olion
      */
     public Feature karsiNavaidinProperties() {
@@ -335,8 +342,6 @@ public class Feature {
             }
         }
 
-        // (Poistetaan: _id, createdAt, updatedAt, elevationGeoid jne.)
         return new Feature(alkuperainen.geometry, props);
     }
-
 }

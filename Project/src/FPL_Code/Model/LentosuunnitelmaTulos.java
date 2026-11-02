@@ -1,11 +1,14 @@
 package FPL_Code.Model;
 
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Tämä on DTO, joka edustaa Tekoälyn palauttamaa analyysia.
  * Tekoälyä (API) pyydetään palauttamaan JSON, joka mäppäytyy suoraan tähän luokkaan.
  */
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LentosuunnitelmaTulos {
 
     private String departure;

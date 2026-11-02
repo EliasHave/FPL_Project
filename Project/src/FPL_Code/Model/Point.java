@@ -3,7 +3,9 @@ package FPL_Code.Model;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Point {
 
     public String name;
@@ -12,6 +14,10 @@ public class Point {
     public int alt;  //korkeus ft
     public String perustelu;  //tekoälyn perustelu kyseiselle reittipisteelle(esim huonon sään tai kielletyn ilmatilan väistäminen)
     public int wpNumber;  //Reittipisteen "järjestys numero"
+
+    public Point() {
+        //tyhjä konstruktori tarvitaan, jotta Jackson voi luoda Point-olion JSONista
+    }
 
     public Point(String name, double lat, double lon) {
         this.name = name;

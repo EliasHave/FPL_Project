@@ -117,7 +117,8 @@ public final class HtmlGenerator {
 
         StringBuilder js = new StringBuilder("const points = [\n");
         for (Point p : pisteet) {
-            js.append(String.format("  {name: '%s', coords: [%.5f, %.5f]},\n",
+            // HUOM! Pakotetaan java.util.Locale.US, jotta JavaScript saa desimaalipisteitä!
+            js.append(String.format(java.util.Locale.US, "  {name: '%s', coords: [%.5f, %.5f]},\n",
                     p.getPointName(), p.getLat(), p.getLon()));
         }
         js.append("];\n");
