@@ -28,6 +28,15 @@ public final class GeoMathUtils {
         return 2 * R_KM * Math.asin(Math.sqrt(a));
     }
 
+
+    /**
+     * Laskee kahden pisteen välisen etäisyyden merimaileina (Nautical Miles, NM).
+     */
+    public static double haversineNm(double lat1, double lon1, double lat2, double lon2) {
+        return haversineKm(lat1, lon1, lat2, lon2) / 1.852;
+    }
+
+
     /**
      * Siirtää annettua koordinaattia X kilometriä tiettyyn suuntaan.
      */
