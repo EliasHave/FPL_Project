@@ -4,6 +4,7 @@ import FPL_Code.Model.FlightRequest;
 import FPL_Code.Service.FlightPlanningService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Map;
 import java.util.UUID;
@@ -60,6 +61,13 @@ public class FlightController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(html);
+    }
+
+
+    @GetMapping("/")
+    public RedirectView ohjaaEtusivulle() {
+        //Uudelleen ohjataan etusivulle
+        return new RedirectView("/index.html");
     }
 
 }
