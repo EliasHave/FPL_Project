@@ -6,7 +6,7 @@ Tavoitteena on tehdä lentosuunnitelman tekemisessä auttava järjestelmä. Jär
 
 Syötteen perusteella järjestelmä laatii tekoälyn avustamana lentosuunnitelman ja ehdottaa sitä käyttäjälle. Järjestelmän ideana on auttaa ohjaajaa suunnittelemaan lento turvallisesti ja havainnollistaa kartalla asioita, joita ohjaaja ei välttämättä itse muistaisi tai tajuaisi ajatella (esim. sääolosuhteet, reitille osuvat ilmatilat ja NOTAMit). Järjestelmää voisi tulevaisuudessa laajentaa niin, että se toimisi lennon aikana esimerkiksi laskien jatkuvasti lähimpiä hätälaskukenttiä.
 
-**[➡️ Testaa täällä / Test the application](https://fpl-project-eliashaverinen-gjhme4chghhhgnag.swedencentral-01.azurewebsites.net)**
+**[➡️ Testaa täällä / Test the application](https://fpl-project-eliashaverinen-gjhme4chghhhgnag.swedencentral-01.azurewebsites.net/)**
 
 ---
 
