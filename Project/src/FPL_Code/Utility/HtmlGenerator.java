@@ -31,9 +31,13 @@ public final class HtmlGenerator {
      */
     public static String generoiTulossivu(FlightRequest pyynto, LentosuunnitelmaTulos aiTulos, DTO_Boss paketti) {
         try {
-            // 1. Lue template tiedostosta (resources/FPL_Template2.html)
-            java.nio.file.Path templatePath = java.nio.file.Paths.get(System.getProperty("user.dir"), "Project", "resources", "FPL_Template2.html");
-            String html = java.nio.file.Files.readString(templatePath, java.nio.charset.StandardCharsets.UTF_8);
+            // 1. Lue template tiedostosta JAR-paketin sisältä (toimii lokaalisti ja Azuressa)
+            java.io.InputStream inputStream = HtmlGenerator.class.getResourceAsStream("/FPL_Template2.html");
+            if (inputStream == null) {
+                // Jos pakkaus on mennyt vikaan ja tiedosto oikeasti puuttuu
+                throw new RuntimeException("Kriittinen virhe: FPL_Template2.html puuttuu luokkapolusta!");
+            }
+            String html = new String(inputStream.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
 
             // 2. Ylätunnisteen tiedot
             html = html.replace("{{DEPARTURE}}", paketti.getLahto().getPointName());
