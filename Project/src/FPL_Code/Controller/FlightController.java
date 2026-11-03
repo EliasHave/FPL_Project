@@ -63,11 +63,4 @@ public class FlightController {
         return ResponseEntity.ok(html);
     }
 
-
-    @GetMapping("/")
-    public RedirectView ohjaaEtusivulle() {
-        //Uudelleen ohjataan etusivulle
-        return new RedirectView("/index.html");
-    }
-
 }

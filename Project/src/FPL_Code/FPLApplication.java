@@ -8,9 +8,6 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 @SpringBootApplication
 @EnableScheduling
 public class FPLApplication {
@@ -23,17 +20,14 @@ public class FPLApplication {
 
         @Override
         public void addResourceHandlers(ResourceHandlerRegistry registry) {
-            // TÄMÄ ON SINUN ALKUPERÄINEN, TOIMIVAKSI TODETTU POLKUSI:
-            Path staticDir = Paths.get(System.getProperty("user.dir"), "Project", "resources", "static");
-
-            // Reititetään kaikki nettiselaimen haut suoraan tähän kansioon
+            // Luetaan static-tiedostot JAR-paketin sisältä (classpath), EI kovalevyltä (file:)
             registry.addResourceHandler("/**")
-                    .addResourceLocations("file:" + staticDir.toAbsolutePath() + "/");
+                    .addResourceLocations("classpath:/static/");
         }
 
         @Override
         public void addViewControllers(ViewControllerRegistry registry) {
-            // Ohjaa localhost:8080/ suoraan index.html tiedostoon
+            // Ohjaa juuriosoite (/) suoraan index.html-tiedostoon
             registry.addViewController("/").setViewName("forward:/index.html");
         }
     }
